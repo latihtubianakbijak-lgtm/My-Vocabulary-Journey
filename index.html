@@ -59,21 +59,26 @@
             transform: translateY(4px);
             box-shadow: 0 4px 0px rgba(0,0,0,0.15);
         }
-        /* 3D Emoji styling effect */
+        /* 3D Emoji styling effect - enlarged */
         .icon-3d {
             display: inline-block;
-            filter: drop-shadow(2px 5px 3px rgba(0, 0, 0, 0.25));
+            font-size: 1.5em;
+            filter: drop-shadow(3px 8px 5px rgba(0, 0, 0, 0.3));
             transition: transform 0.2s ease;
         }
         .icon-3d:hover {
-            transform: scale(1.1) rotate(3deg);
+            transform: scale(1.15) rotate(3deg);
+        }
+        .icon-huge {
+            font-size: 4.5rem;
+            filter: drop-shadow(4px 10px 6px rgba(0, 0, 0, 0.3));
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-6 overflow-x-hidden">
+<body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-4 overflow-x-hidden">
 
     <!-- Top Header Bar -->
-    <header class="w-full max-w-5xl flex flex-wrap items-center justify-between bg-white/90 backdrop-blur-md p-3 md:p-4 rounded-3xl shadow-lg mb-3 border-4 border-yellow-300 gap-2">
+    <header class="w-full max-w-7xl flex flex-wrap items-center justify-between bg-white/90 backdrop-blur-md p-3 md:p-4 rounded-3xl shadow-lg mb-2 border-4 border-yellow-300 gap-2">
         <div class="flex items-center space-x-2 md:space-x-3">
             <button onclick="router('home')" class="bg-yellow-400 hover:bg-yellow-500 text-white font-kids px-3 py-1.5 md:px-4 md:py-2 rounded-2xl shadow-md border-b-4 border-yellow-600 transition flex items-center gap-1 text-sm md:text-lg">
                 <span class="icon-3d">🏠</span> Home
@@ -95,13 +100,13 @@
         </div>
     </header>
 
-    <!-- Main Container Card -->
-    <main id="app-container" class="w-full max-w-5xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-4 md:p-8 border-6 md:border-8 border-indigo-200 flex flex-col items-center justify-center min-h-[60vh] md:min-h-[580px] relative overflow-hidden">
+    <!-- Main Container Card - Full Screen Immersive Mode -->
+    <main id="app-container" class="w-full max-w-7xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-4 md:p-8 border-6 md:border-8 border-indigo-200 flex flex-col items-center justify-center flex-grow min-h-[75vh] md:min-h-[78vh] relative overflow-hidden">
         <!-- Dynamic Content Injected Here via JavaScript -->
     </main>
 
     <!-- Footer Teacher Guide Bar -->
-    <footer class="w-full max-w-5xl mt-3 bg-indigo-900/90 backdrop-blur-md text-white p-3 md:p-4 rounded-3xl shadow-lg flex flex-wrap items-center justify-between border-4 border-indigo-400 gap-2">
+    <footer class="w-full max-w-7xl mt-2 bg-indigo-900/90 backdrop-blur-md text-white p-3 md:p-4 rounded-3xl shadow-lg flex flex-wrap items-center justify-between border-4 border-indigo-400 gap-2">
         <div class="flex items-center space-x-2 md:space-x-3">
             <span class="text-2xl md:text-3xl icon-3d">🦉</span>
             <div>
@@ -292,28 +297,28 @@
         function renderHome(container) {
             teacherTalk("Yay! Welcome back! What shall we explore today?");
             container.innerHTML = `
-                <div class="text-center mb-4 md:mb-6">
-                    <h1 class="font-kids text-3xl md:text-5xl text-indigo-600 drop-shadow-md mb-1 md:mb-2"><span class="icon-3d">🌟</span> Vocab Adventure <span class="icon-3d">🚀</span></h1>
-                    <p class="text-gray-600 font-semibold text-xs md:text-base">Play, Learn & Grow in English!</p>
+                <div class="text-center mb-6">
+                    <h1 class="font-kids text-4xl md:text-6xl text-indigo-600 drop-shadow-md mb-2"><span class="icon-3d">🌟</span> Vocab Adventure <span class="icon-3d">🚀</span></h1>
+                    <p class="text-gray-600 font-semibold text-sm md:text-lg">Play, Learn & Grow in English!</p>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 w-full max-w-3xl px-1">
-                    <button onclick="router('learn-menu')" class="card-3d bg-gradient-to-br from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-kids p-3 md:p-5 rounded-3xl shadow-lg border-b-6 md:border-b-8 border-orange-700 flex flex-col items-center justify-center space-y-1 md:space-y-2 text-base md:text-xl">
-                        <span class="text-3xl md:text-4xl icon-3d">📚</span> Learn Vocab
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 w-full max-w-5xl px-2">
+                    <button onclick="router('learn-menu')" class="card-3d bg-gradient-to-br from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-kids p-6 md:p-8 rounded-3xl shadow-xl border-b-8 border-orange-700 flex flex-col items-center justify-center space-y-2 text-xl md:text-2xl">
+                        <span class="text-5xl md:text-6xl icon-3d mb-2">📚</span> Learn Vocab
                     </button>
-                    <button onclick="router('story-adventure')" class="card-3d bg-gradient-to-br from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-kids p-3 md:p-5 rounded-3xl shadow-lg border-b-6 md:border-b-8 border-teal-700 flex flex-col items-center justify-center space-y-1 md:space-y-2 text-base md:text-xl">
-                        <span class="text-3xl md:text-4xl icon-3d">📖</span> Story World
+                    <button onclick="router('story-adventure')" class="card-3d bg-gradient-to-br from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-kids p-6 md:p-8 rounded-3xl shadow-xl border-b-8 border-teal-700 flex flex-col items-center justify-center space-y-2 text-xl md:text-2xl">
+                        <span class="text-5xl md:text-6xl icon-3d mb-2">📖</span> Story World
                     </button>
-                    <button onclick="router('games-menu')" class="card-3d bg-gradient-to-br from-sky-400 to-blue-600 hover:from-sky-500 hover:to-blue-700 text-white font-kids p-3 md:p-5 rounded-3xl shadow-lg border-b-6 md:border-b-8 border-blue-800 flex flex-col items-center justify-center space-y-1 md:space-y-2 text-base md:text-xl">
-                        <span class="text-3xl md:text-4xl icon-3d">🎮</span> Play Games
+                    <button onclick="router('games-menu')" class="card-3d bg-gradient-to-br from-sky-400 to-blue-600 hover:from-sky-500 hover:to-blue-700 text-white font-kids p-6 md:p-8 rounded-3xl shadow-xl border-b-8 border-blue-800 flex flex-col items-center justify-center space-y-2 text-xl md:text-2xl">
+                        <span class="text-5xl md:text-6xl icon-3d mb-2">🎮</span> Play Games
                     </button>
-                    <button onclick="router('exam')" class="card-3d bg-gradient-to-br from-purple-400 to-indigo-600 hover:from-purple-500 hover:to-indigo-700 text-white font-kids p-3 md:p-5 rounded-3xl shadow-lg border-b-6 md:border-b-8 border-indigo-800 flex flex-col items-center justify-center space-y-1 md:space-y-2 text-base md:text-xl">
-                        <span class="text-3xl md:text-4xl icon-3d">🏆</span> Challenge Exam
+                    <button onclick="router('exam')" class="card-3d bg-gradient-to-br from-purple-400 to-indigo-600 hover:from-purple-500 hover:to-indigo-700 text-white font-kids p-6 md:p-8 rounded-3xl shadow-xl border-b-8 border-indigo-800 flex flex-col items-center justify-center space-y-2 text-xl md:text-2xl">
+                        <span class="text-5xl md:text-6xl icon-3d mb-2">🏆</span> Challenge Exam
                     </button>
-                    <button onclick="router('progress')" class="card-3d bg-gradient-to-br from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-kids p-3 md:p-5 rounded-3xl shadow-lg border-b-6 md:border-b-8 border-rose-700 flex flex-col items-center justify-center space-y-1 md:space-y-2 text-base md:text-xl">
-                        <span class="text-3xl md:text-4xl icon-3d">📊</span> My Progress
+                    <button onclick="router('progress')" class="card-3d bg-gradient-to-br from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-kids p-6 md:p-8 rounded-3xl shadow-xl border-b-8 border-rose-700 flex flex-col items-center justify-center space-y-2 text-xl md:text-2xl">
+                        <span class="text-5xl md:text-6xl icon-3d mb-2">📊</span> My Progress
                     </button>
-                    <button onclick="router('rewards')" class="card-3d bg-gradient-to-br from-yellow-300 to-amber-500 hover:from-yellow-400 hover:to-amber-600 text-white font-kids p-3 md:p-5 rounded-3xl shadow-lg border-b-6 md:border-b-8 border-amber-700 flex flex-col items-center justify-center space-y-1 md:space-y-2 text-base md:text-xl">
-                        <span class="text-3xl md:text-4xl icon-3d">🎁</span> Rewards Shop
+                    <button onclick="router('rewards')" class="card-3d bg-gradient-to-br from-yellow-300 to-amber-500 hover:from-yellow-400 hover:to-amber-600 text-white font-kids p-6 md:p-8 rounded-3xl shadow-xl border-b-8 border-amber-700 flex flex-col items-center justify-center space-y-2 text-xl md:text-2xl">
+                        <span class="text-5xl md:text-6xl icon-3d mb-2">🎁</span> Rewards Shop
                     </button>
                 </div>
             `;
@@ -323,19 +328,19 @@
             teacherTalk("Woohoo! Choose a category to discover amazing words!");
             const categories = Object.keys(vocabDatabase);
             let gridHTML = categories.map(cat => `
-                <button onclick="router('vocab-session', '${cat}')" class="card-3d bg-white hover:bg-indigo-50 border-4 border-indigo-200 p-3 md:p-4 rounded-3xl shadow-md flex flex-col items-center justify-center space-y-1 transition">
-                    <span class="text-2xl md:text-4xl icon-3d">${getCategoryIcon(cat)}</span>
-                    <span class="font-kids text-indigo-700 text-xs md:text-base capitalize">${cat.toLowerCase()}</span>
+                <button onclick="router('vocab-session', '${cat}')" class="card-3d bg-white hover:bg-indigo-50 border-4 border-indigo-200 p-5 md:p-6 rounded-3xl shadow-lg flex flex-col items-center justify-center space-y-2 transition">
+                    <span class="text-4xl md:text-6xl icon-3d">${getCategoryIcon(cat)}</span>
+                    <span class="font-kids text-indigo-700 text-sm md:text-lg capitalize">${cat.toLowerCase()}</span>
                 </button>
             `).join('');
 
             container.innerHTML = `
-                <div class="flex items-center justify-between w-full mb-3">
-                    <button onclick="router('home')" class="bg-gray-200 hover:bg-gray-300 font-kids px-3 py-1.5 rounded-2xl text-xs md:text-sm text-gray-700"><span class="icon-3d">⬅️</span> Back</button>
-                    <h2 class="font-kids text-lg md:text-2xl text-indigo-700 text-center">Choose Vocabulary Topic</h2>
+                <div class="flex items-center justify-between w-full mb-4 px-2">
+                    <button onclick="router('home')" class="bg-gray-200 hover:bg-gray-300 font-kids px-4 py-2 rounded-2xl text-sm md:text-base text-gray-700"><span class="icon-3d">⬅️</span> Back</button>
+                    <h2 class="font-kids text-2xl md:text-3xl text-indigo-700 text-center">Choose Vocabulary Topic</h2>
                     <div></div>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 w-full max-h-[60vh] overflow-y-auto p-1">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 w-full max-h-[65vh] overflow-y-auto p-2">
                     ${gridHTML}
                 </div>
             `;
@@ -360,15 +365,15 @@
                 confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                 
                 container.innerHTML = `
-                    <div class="text-center space-y-3 md:space-y-4">
-                        <div class="text-5xl md:text-6xl bouncing icon-3d">🎉</div>
-                        <h2 class="font-kids text-2xl md:text-3xl text-indigo-700">Yippee! Awesome Job!</h2>
-                        <p class="font-semibold text-gray-600 text-sm md:text-base">You completed the ${state.activeCategory} adventure![cite: 1]</p>
-                        <div class="flex justify-center space-x-4 text-lg md:text-xl font-kids text-amber-600 bg-yellow-100 p-3 rounded-2xl">
+                    <div class="text-center space-y-4 w-full max-w-xl p-6 bg-indigo-50 rounded-3xl border-4 border-indigo-200 shadow-lg">
+                        <div class="text-7xl bouncing icon-3d">🎉</div>
+                        <h2 class="font-kids text-3xl md:text-4xl text-indigo-700">Yippee! Awesome Job!</h2>
+                        <p class="font-semibold text-gray-600 text-base md:text-xl">You completed the ${state.activeCategory} adventure![cite: 1]</p>
+                        <div class="flex justify-center space-x-6 text-xl md:text-2xl font-kids text-amber-600 bg-yellow-100 p-4 rounded-2xl shadow-inner">
                             <span>+5 <span class="icon-3d">⭐</span></span>
                             <span>+20 <span class="icon-3d">🪙</span></span>
                         </div>
-                        <button onclick="router('learn-menu')" class="card-3d bg-emerald-500 text-white font-kids px-6 py-3 rounded-2xl shadow-lg border-b-4 border-emerald-700 text-lg">Continue Learning <span class="icon-3d">🚀</span></button>
+                        <button onclick="router('learn-menu')" class="card-3d bg-emerald-500 text-white font-kids px-8 py-4 rounded-2xl shadow-lg border-b-6 border-emerald-700 text-xl">Continue Learning <span class="icon-3d">🚀</span></button>
                     </div>
                 `;
                 return;
@@ -378,20 +383,21 @@
             teacherTalk(`Look at the ${item.word}! Listen and repeat after me!`);
 
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('learn-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs text-gray-700"><span class="icon-3d">⬅️</span> Topics</button>
-                    <span class="font-kids text-indigo-500 text-xs md:text-sm">Item ${state.currentIndex + 1} of ${list.length}</span>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('learn-menu')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm text-gray-700"><span class="icon-3d">⬅️</span> Topics</button>
+                    <span class="font-kids text-indigo-500 text-base md:text-lg">Item ${state.currentIndex + 1} of ${list.length}</span>
+                    <div></div>
                 </div>
-                <div class="bg-gradient-to-b from-indigo-50 to-pink-50 p-4 md:p-6 rounded-3xl border-4 border-indigo-200 shadow-inner flex flex-col items-center text-center w-full max-w-md">
-                    <div class="text-7xl md:text-9xl mb-2 md:mb-4 bouncing cursor-pointer icon-3d" onclick="speak('${item.word}')">${item.emoji}</div>
-                    <h2 class="font-kids text-3xl md:text-4xl text-indigo-700 mb-1 md:mb-2">${item.word}</h2>
-                    <p class="font-semibold text-gray-600 text-xs md:text-base mb-4 md:mb-6 bg-white px-3 py-2 rounded-2xl shadow-sm border border-indigo-100">"${item.sentence}"</p>
+                <div class="bg-gradient-to-b from-indigo-50 to-pink-50 p-6 md:p-10 rounded-3xl border-6 border-indigo-200 shadow-2xl flex flex-col items-center text-center w-full max-w-2xl my-auto">
+                    <div class="text-8xl md:text-[9rem] mb-6 bouncing cursor-pointer icon-huge" onclick="speak('${item.word}')">${item.emoji}</div>
+                    <h2 class="font-kids text-4xl md:text-6xl text-indigo-700 mb-3">${item.word}</h2>
+                    <p class="font-semibold text-gray-700 text-base md:text-xl mb-6 bg-white px-6 py-3 rounded-2xl shadow-md border-2 border-indigo-100">"${item.sentence}"</p>
                     
-                    <div class="flex space-x-3 w-full">
-                        <button onclick="speak('${item.word}')" class="flex-1 card-3d bg-sky-400 hover:bg-sky-500 text-white font-kids py-2.5 md:py-3 rounded-2xl shadow-lg border-b-4 border-sky-600 text-base md:text-lg flex items-center justify-center gap-2">
+                    <div class="flex space-x-4 w-full max-w-md">
+                        <button onclick="speak('${item.word}')" class="flex-1 card-3d bg-sky-400 hover:bg-sky-500 text-white font-kids py-4 rounded-2xl shadow-lg border-b-6 border-sky-600 text-lg md:text-xl flex items-center justify-center gap-2">
                             <span class="icon-3d">🔊</span> Listen
                         </button>
-                        <button onclick="nextVocabItem()" class="flex-1 card-3d bg-emerald-500 hover:bg-emerald-600 text-white font-kids py-2.5 md:py-3 rounded-2xl shadow-lg border-b-4 border-emerald-700 text-base md:text-lg flex items-center justify-center gap-2">
+                        <button onclick="nextVocabItem()" class="flex-1 card-3d bg-emerald-500 hover:bg-emerald-600 text-white font-kids py-4 rounded-2xl shadow-lg border-b-6 border-emerald-700 text-lg md:text-xl flex items-center justify-center gap-2">
                             Next <span class="icon-3d">➡️</span>
                         </button>
                     </div>
@@ -408,39 +414,39 @@
         function renderStoryAdventure(container) {
             teacherTalk("Yay! Welcome to Story Adventure! Choose a magical world to explore!");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-3">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-3 py-1.5 rounded-2xl text-xs md:text-sm text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
-                    <h2 class="font-kids text-lg md:text-2xl text-indigo-700">Adventure World Map</h2>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm md:text-base text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
+                    <h2 class="font-kids text-2xl md:text-3xl text-indigo-700">Adventure World Map</h2>
                     <div></div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full max-w-2xl max-h-[60vh] overflow-y-auto p-1">
-                    <div onclick="startStoryWorld('Farm World')" class="card-3d bg-gradient-to-r from-green-400 to-emerald-500 p-4 md:p-5 rounded-3xl text-white font-kids shadow-lg border-b-6 md:border-b-8 border-emerald-700 cursor-pointer flex items-center justify-between">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full max-w-4xl max-h-[65vh] overflow-y-auto p-2">
+                    <div onclick="startStoryWorld('Farm World')" class="card-3d bg-gradient-to-r from-green-400 to-emerald-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-emerald-700 cursor-pointer flex items-center justify-between">
                         <div>
-                            <h3 class="text-xl md:text-2xl"><span class="icon-3d">🌾</span> Farm World</h3>
-                            <p class="text-xs font-normal opacity-90">Vegetables, Fruits & Animals</p>
+                            <h3 class="text-2xl md:text-3xl mb-1"><span class="icon-3d">🌾</span> Farm World</h3>
+                            <p class="text-sm md:text-base font-normal opacity-90">Vegetables, Fruits & Animals</p>
                         </div>
-                        <span class="text-3xl md:text-4xl icon-3d">🚜</span>
+                        <span class="text-5xl md:text-6xl icon-3d">🚜</span>
                     </div>
-                    <div onclick="startStoryWorld('City World')" class="card-3d bg-gradient-to-r from-blue-400 to-indigo-500 p-4 md:p-5 rounded-3xl text-white font-kids shadow-lg border-b-6 md:border-b-8 border-indigo-700 cursor-pointer flex items-center justify-between">
+                    <div onclick="startStoryWorld('City World')" class="card-3d bg-gradient-to-r from-blue-400 to-indigo-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-indigo-700 cursor-pointer flex items-center justify-between">
                         <div>
-                            <h3 class="text-xl md:text-2xl"><span class="icon-3d">🏙️</span> City World</h3>
-                            <p class="text-xs font-normal opacity-90">Occupations & Vehicles</p>
+                            <h3 class="text-2xl md:text-3xl mb-1"><span class="icon-3d">🏙️</span> City World</h3>
+                            <p class="text-sm md:text-base font-normal opacity-90">Occupations & Vehicles</p>
                         </div>
-                        <span class="text-3xl md:text-4xl icon-3d">🚒</span>
+                        <span class="text-5xl md:text-6xl icon-3d">🚒</span>
                     </div>
-                    <div onclick="startStoryWorld('Home World')" class="card-3d bg-gradient-to-r from-pink-400 to-rose-500 p-4 md:p-5 rounded-3xl text-white font-kids shadow-lg border-b-6 md:border-b-8 border-rose-700 cursor-pointer flex items-center justify-between">
+                    <div onclick="startStoryWorld('Home World')" class="card-3d bg-gradient-to-r from-pink-400 to-rose-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-rose-700 cursor-pointer flex items-center justify-between">
                         <div>
-                            <h3 class="text-xl md:text-2xl"><span class="icon-3d">🏡</span> Home World</h3>
-                            <p class="text-xs font-normal opacity-90">Body Parts & Daily Objects</p>
+                            <h3 class="text-2xl md:text-3xl mb-1"><span class="icon-3d">🏡</span> Home World</h3>
+                            <p class="text-sm md:text-base font-normal opacity-90">Body Parts & Daily Objects</p>
                         </div>
-                        <span class="text-3xl md:text-4xl icon-3d">🧸</span>
+                        <span class="text-5xl md:text-6xl icon-3d">🧸</span>
                     </div>
-                    <div onclick="startStoryWorld('Shape World')" class="card-3d bg-gradient-to-r from-yellow-400 to-amber-500 p-4 md:p-5 rounded-3xl text-white font-kids shadow-lg border-b-6 md:border-b-8 border-amber-700 cursor-pointer flex items-center justify-between">
+                    <div onclick="startStoryWorld('Shape World')" class="card-3d bg-gradient-to-r from-yellow-400 to-amber-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-amber-700 cursor-pointer flex items-center justify-between">
                         <div>
-                            <h3 class="text-xl md:text-2xl"><span class="icon-3d">⭐</span> Shape World</h3>
-                            <p class="text-xs font-normal opacity-90">Shapes & Colors</p>
+                            <h3 class="text-2xl md:text-3xl mb-1"><span class="icon-3d">⭐</span> Shape World</h3>
+                            <p class="text-sm md:text-base font-normal opacity-90">Shapes & Colors</p>
                         </div>
-                        <span class="text-3xl md:text-4xl icon-3d">🎨</span>
+                        <span class="text-5xl md:text-6xl icon-3d">🎨</span>
                     </div>
                 </div>
             `;
@@ -474,19 +480,19 @@
             const container = document.getElementById('app-container');
 
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('story-adventure')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs text-gray-700"><span class="icon-3d">🗺️</span> Map</button>
-                    <span class="font-kids text-indigo-700 text-sm md:text-lg">${worldName}</span>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('story-adventure')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm text-gray-700"><span class="icon-3d">🗺️</span> Map</button>
+                    <span class="font-kids text-indigo-700 text-lg md:text-xl">${worldName}</span>
                     <div></div>
                 </div>
-                <div class="bg-amber-50 p-4 md:p-6 rounded-3xl border-4 border-amber-200 shadow-md w-full max-w-lg text-center space-y-3 md:space-y-4">
-                    <h3 class="font-kids text-xl md:text-2xl text-amber-800">${story.title}</h3>
-                    <p class="text-gray-700 text-sm md:text-lg leading-relaxed font-semibold">"${story.text}"</p>
-                    <div class="bg-white p-2.5 rounded-2xl inline-block shadow-sm border border-amber-200">
-                        <span class="font-kids text-indigo-600 text-xs md:text-sm">Key Vocabulary: ${story.vocab}</span>
+                <div class="bg-amber-50 p-6 md:p-10 rounded-3xl border-6 border-amber-200 shadow-2xl w-full max-w-2xl text-center space-y-6 my-auto">
+                    <h3 class="font-kids text-2xl md:text-3xl text-amber-800">${story.title}</h3>
+                    <p class="text-gray-700 text-lg md:text-2xl leading-relaxed font-semibold">"${story.text}"</p>
+                    <div class="bg-white p-3 md:p-4 rounded-2xl inline-block shadow-md border-2 border-amber-200">
+                        <span class="font-kids text-indigo-600 text-base md:text-lg">Key Vocabulary: ${story.vocab}</span>
                     </div>
                     <div>
-                        <button onclick="finishStory('${worldName}')" class="card-3d bg-emerald-500 hover:bg-emerald-600 text-white font-kids px-6 py-3 rounded-2xl shadow-lg border-b-4 border-emerald-700 text-base md:text-lg">
+                        <button onclick="finishStory('${worldName}')" class="card-3d bg-emerald-500 hover:bg-emerald-600 text-white font-kids px-8 py-4 rounded-2xl shadow-xl border-b-6 border-emerald-700 text-xl">
                             Complete Story! <span class="icon-3d">🌟</span>
                         </button>
                     </div>
@@ -506,29 +512,29 @@
         function renderGamesMenu(container) {
             teacherTalk("Yahoo! Time for fun mini-games! Pick your favorite challenge!");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-3">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-3 py-1.5 rounded-2xl text-xs md:text-sm text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
-                    <h2 class="font-kids text-lg md:text-2xl text-indigo-700">Fun Learning Games</h2>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm md:text-base text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
+                    <h2 class="font-kids text-2xl md:text-3xl text-indigo-700">Fun Learning Games</h2>
                     <div></div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 w-full max-w-3xl max-h-[60vh] overflow-y-auto p-1">
-                    <button onclick="router('game-play', 'picture-match')" class="card-3d bg-gradient-to-br from-pink-400 to-rose-500 p-3 md:p-4 rounded-3xl text-white font-kids shadow-lg border-b-6 border-rose-700 flex flex-col items-center justify-center space-y-1 text-sm md:text-base">
-                        <span class="text-2xl md:text-3xl icon-3d">🍎</span> Picture Match (Easy)
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-5xl max-h-[65vh] overflow-y-auto p-2">
+                    <button onclick="router('game-play', 'picture-match')" class="card-3d bg-gradient-to-br from-pink-400 to-rose-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-rose-700 flex flex-col items-center justify-center space-y-3 text-lg md:text-xl">
+                        <span class="text-5xl md:text-6xl icon-3d">🍎</span> Picture Match (Easy)
                     </button>
-                    <button onclick="router('game-play', 'listen-choose')" class="card-3d bg-gradient-to-br from-purple-400 to-indigo-500 p-3 md:p-4 rounded-3xl text-white font-kids shadow-lg border-b-6 border-indigo-700 flex flex-col items-center justify-center space-y-1 text-sm md:text-base">
-                        <span class="text-2xl md:text-3xl icon-3d">👂</span> Listen & Choose (Easy)
+                    <button onclick="router('game-play', 'listen-choose')" class="card-3d bg-gradient-to-br from-purple-400 to-indigo-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-indigo-700 flex flex-col items-center justify-center space-y-3 text-lg md:text-xl">
+                        <span class="text-5xl md:text-6xl icon-3d">👂</span> Listen & Choose (Easy)
                     </button>
-                    <button onclick="router('game-play', 'odd-one-out')" class="card-3d bg-gradient-to-br from-amber-400 to-orange-500 p-3 md:p-4 rounded-3xl text-white font-kids shadow-lg border-b-6 border-orange-700 flex flex-col items-center justify-center space-y-1 text-sm md:text-base">
-                        <span class="text-2xl md:text-3xl icon-3d">🔍</span> Odd One Out (Medium)
+                    <button onclick="router('game-play', 'odd-one-out')" class="card-3d bg-gradient-to-br from-amber-400 to-orange-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-orange-700 flex flex-col items-center justify-center space-y-3 text-lg md:text-xl">
+                        <span class="text-5xl md:text-6xl icon-3d">🔍</span> Odd One Out (Medium)
                     </button>
-                    <button onclick="router('game-play', 'vocab-detective')" class="card-3d bg-gradient-to-br from-emerald-400 to-teal-500 p-3 md:p-4 rounded-3xl text-white font-kids shadow-lg border-b-6 border-teal-700 flex flex-col items-center justify-center space-y-1 text-sm md:text-base">
-                        <span class="text-2xl md:text-3xl icon-3d">🕵️</span> Vocab Detective (Hard)
+                    <button onclick="router('game-play', 'vocab-detective')" class="card-3d bg-gradient-to-br from-emerald-400 to-teal-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-teal-700 flex flex-col items-center justify-center space-y-3 text-lg md:text-xl">
+                        <span class="text-5xl md:text-6xl icon-3d">🕵️</span> Vocab Detective (Hard)
                     </button>
-                    <button onclick="router('game-play', 'word-builder')" class="card-3d bg-gradient-to-br from-sky-400 to-blue-600 p-3 md:p-4 rounded-3xl text-white font-kids shadow-lg border-b-6 border-blue-800 flex flex-col items-center justify-center space-y-1 text-sm md:text-base">
-                        <span class="text-2xl md:text-3xl icon-3d">🔤</span> Word Builder (Hard)
+                    <button onclick="router('game-play', 'word-builder')" class="card-3d bg-gradient-to-br from-sky-400 to-blue-600 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-blue-800 flex flex-col items-center justify-center space-y-3 text-lg md:text-xl">
+                        <span class="text-5xl md:text-6xl icon-3d">🔤</span> Word Builder (Hard)
                     </button>
-                    <button onclick="router('game-play', 'story-quiz')" class="card-3d bg-gradient-to-br from-yellow-300 to-amber-500 p-3 md:p-4 rounded-3xl text-white font-kids shadow-lg border-b-6 border-amber-700 flex flex-col items-center justify-center space-y-1 text-sm md:text-base">
-                        <span class="text-2xl md:text-3xl icon-3d">❓</span> Story Quiz (Hard)
+                    <button onclick="router('game-play', 'story-quiz')" class="card-3d bg-gradient-to-br from-yellow-300 to-amber-500 p-6 md:p-8 rounded-3xl text-white font-kids shadow-xl border-b-8 border-amber-700 flex flex-col items-center justify-center space-y-3 text-lg md:text-xl">
+                        <span class="text-5xl md:text-6xl icon-3d">❓</span> Story Quiz (Hard)
                     </button>
                 </div>
             `;
@@ -553,18 +559,18 @@
         function renderPictureMatchGame(container) {
             teacherTalk("Can you match the word APPLE with the correct picture?");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs"><span class="icon-3d">⬅️</span> Games</button>
-                    <span class="font-kids text-indigo-700 text-xs md:text-sm">Game: Picture Match</span>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm text-gray-700"><span class="icon-3d">⬅️</span> Games</button>
+                    <span class="font-kids text-indigo-700 text-base md:text-lg">Game: Picture Match</span>
                     <div></div>
                 </div>
-                <div class="text-center space-y-3 md:space-y-4">
-                    <h2 class="font-kids text-3xl md:text-4xl text-indigo-700 bg-pink-100 px-5 py-2 rounded-3xl inline-block border-2 border-pink-300">APPLE</h2>
-                    <p class="text-gray-600 font-semibold text-xs md:text-sm">Tap the matching picture below:</p>
-                    <div class="grid grid-cols-3 gap-3 md:gap-4 max-w-sm mx-auto">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-4 md:p-6 rounded-3xl text-5xl md:text-6xl shadow-md border-4 border-indigo-100 hover:bg-red-50"><span class="icon-3d">🍌</span></button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-4 md:p-6 rounded-3xl text-5xl md:text-6xl shadow-md border-4 border-indigo-100 hover:bg-green-50"><span class="icon-3d">🍎</span></button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-4 md:p-6 rounded-3xl text-5xl md:text-6xl shadow-md border-4 border-indigo-100 hover:bg-red-50"><span class="icon-3d">🍊</span></button>
+                <div class="text-center space-y-6 w-full max-w-2xl my-auto p-6 bg-pink-50 rounded-3xl border-6 border-pink-200 shadow-2xl">
+                    <h2 class="font-kids text-4xl md:text-5xl text-indigo-700 bg-white px-6 py-3 rounded-3xl inline-block border-4 border-pink-300 shadow-md">APPLE</h2>
+                    <p class="text-gray-700 font-semibold text-lg md:text-xl">Tap the matching picture below:</p>
+                    <div class="grid grid-cols-3 gap-6 max-w-xl mx-auto">
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-8 md:p-12 rounded-3xl text-7xl md:text-8xl shadow-xl border-6 border-indigo-100 hover:bg-red-50 flex items-center justify-center"><span class="icon-huge">🍌</span></button>
+                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-8 md:p-12 rounded-3xl text-7xl md:text-8xl shadow-xl border-6 border-indigo-100 hover:bg-green-50 flex items-center justify-center"><span class="icon-huge">🍎</span></button>
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-8 md:p-12 rounded-3xl text-7xl md:text-8xl shadow-xl border-6 border-indigo-100 hover:bg-red-50 flex items-center justify-center"><span class="icon-huge">🍊</span></button>
                     </div>
                 </div>
             `;
@@ -574,17 +580,17 @@
             teacherTalk("Listen carefully and find the cute dog!");
             speak("Find the dog.");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs"><span class="icon-3d">⬅️</span> Games</button>
-                    <span class="font-kids text-indigo-700 text-xs md:text-sm">Game: Listen & Choose</span>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm text-gray-700"><span class="icon-3d">⬅️</span> Games</button>
+                    <span class="font-kids text-indigo-700 text-base md:text-lg">Game: Listen & Choose</span>
                     <div></div>
                 </div>
-                <div class="text-center space-y-3 md:space-y-4">
-                    <button onclick="speak('Find the dog.')" class="bg-purple-500 text-white font-kids px-4 py-2 rounded-2xl shadow text-sm"><span class="icon-3d">🔊</span> Replay Audio</button>
-                    <div class="grid grid-cols-3 gap-3 md:gap-4 max-w-sm mx-auto">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-4 md:p-6 rounded-3xl text-5xl md:text-6xl shadow-md border-4 border-indigo-100"><span class="icon-3d">🐱</span></button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-4 md:p-6 rounded-3xl text-5xl md:text-6xl shadow-md border-4 border-indigo-100"><span class="icon-3d">🐶</span></button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-4 md:p-6 rounded-3xl text-5xl md:text-6xl shadow-md border-4 border-indigo-100"><span class="icon-3d">🐰</span></button>
+                <div class="text-center space-y-6 w-full max-w-2xl my-auto p-6 bg-purple-50 rounded-3xl border-6 border-purple-200 shadow-2xl">
+                    <button onclick="speak('Find the dog.')" class="bg-purple-500 hover:bg-purple-600 text-white font-kids px-6 py-3 rounded-2xl shadow-lg text-lg flex items-center justify-center gap-2 mx-auto"><span class="icon-3d">🔊</span> Replay Audio</button>
+                    <div class="grid grid-cols-3 gap-6 max-w-xl mx-auto">
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-8 md:p-12 rounded-3xl text-7xl md:text-8xl shadow-xl border-6 border-indigo-100 flex items-center justify-center"><span class="icon-huge">🐱</span></button>
+                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-8 md:p-12 rounded-3xl text-7xl md:text-8xl shadow-xl border-6 border-indigo-100 flex items-center justify-center"><span class="icon-huge">🐶</span></button>
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-8 md:p-12 rounded-3xl text-7xl md:text-8xl shadow-xl border-6 border-indigo-100 flex items-center justify-center"><span class="icon-huge">🐰</span></button>
                     </div>
                 </div>
             `;
@@ -593,18 +599,18 @@
         function renderOddOneOutGame(container) {
             teacherTalk("Which item does NOT belong here?");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs"><span class="icon-3d">⬅️</span> Games</button>
-                    <span class="font-kids text-indigo-700 text-xs md:text-sm">Game: Odd One Out</span>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm text-gray-700"><span class="icon-3d">⬅️</span> Games</button>
+                    <span class="font-kids text-indigo-700 text-base md:text-lg">Game: Odd One Out</span>
                     <div></div>
                 </div>
-                <div class="text-center space-y-3">
-                    <h2 class="font-kids text-base md:text-xl text-indigo-700">Find the Odd One Out!</h2>
-                    <div class="grid grid-cols-2 gap-3 max-w-md mx-auto">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-3 rounded-3xl text-lg font-kids shadow-md border-4 border-indigo-100"><span class="icon-3d">🍎</span> Apple</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-3 rounded-3xl text-lg font-kids shadow-md border-4 border-indigo-100"><span class="icon-3d">🍌</span> Banana</button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-3 rounded-3xl text-lg font-kids shadow-md border-4 border-indigo-100"><span class="icon-3d">🥕</span> Carrot</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-3 rounded-3xl text-lg font-kids shadow-md border-4 border-indigo-100"><span class="icon-3d">🍊</span> Orange</button>
+                <div class="text-center space-y-6 w-full max-w-2xl my-auto p-6 bg-amber-50 rounded-3xl border-6 border-amber-200 shadow-2xl">
+                    <h2 class="font-kids text-2xl md:text-3xl text-indigo-700">Find the Odd One Out!</h2>
+                    <div class="grid grid-cols-2 gap-4 max-w-lg mx-auto">
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-3xl text-xl md:text-2xl font-kids shadow-xl border-6 border-indigo-100 flex items-center justify-center gap-3"><span class="icon-huge">🍎</span> Apple</button>
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-3xl text-xl md:text-2xl font-kids shadow-xl border-6 border-indigo-100 flex items-center justify-center gap-3"><span class="icon-huge">🍌</span> Banana</button>
+                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-6 rounded-3xl text-xl md:text-2xl font-kids shadow-xl border-6 border-indigo-100 flex items-center justify-center gap-3"><span class="icon-huge">🥕</span> Carrot</button>
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-3xl text-xl md:text-2xl font-kids shadow-xl border-6 border-indigo-100 flex items-center justify-center gap-3"><span class="icon-huge">🍊</span> Orange</button>
                     </div>
                 </div>
             `;
@@ -613,18 +619,18 @@
         function renderVocabDetectiveGame(container) {
             teacherTalk("Read the clues and guess the secret word!");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs"><span class="icon-3d">⬅️</span> Games</button>
-                    <span class="font-kids text-indigo-700 text-xs md:text-sm">Game: Vocab Detective</span>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm text-gray-700"><span class="icon-3d">⬅️</span> Games</button>
+                    <span class="font-kids text-indigo-700 text-base md:text-lg">Game: Vocab Detective</span>
                     <div></div>
                 </div>
-                <div class="text-center space-y-3 bg-emerald-50 p-4 md:p-6 rounded-3xl border-4 border-emerald-200 max-w-md mx-auto">
-                    <h3 class="font-kids text-xl text-emerald-800"><span class="icon-3d">🕵️</span> Detective Clues:</h3>
-                    <p class="text-gray-700 font-semibold text-sm">• I am yellow.<br>• Monkeys like me.<br>• You can peel and eat me.</p>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-2.5 rounded-2xl font-kids text-sm shadow">Apple</button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-2.5 rounded-2xl font-kids text-sm shadow">Banana</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-2.5 rounded-2xl font-kids text-sm shadow">Carrot</button>
+                <div class="text-center space-y-6 bg-emerald-50 p-6 md:p-10 rounded-3xl border-6 border-emerald-200 max-w-2xl mx-auto my-auto shadow-2xl">
+                    <h3 class="font-kids text-2xl md:text-3xl text-emerald-800"><span class="icon-3d">🕵️</span> Detective Clues:</h3>
+                    <p class="text-gray-700 font-semibold text-lg md:text-xl">• I am yellow.<br>• Monkeys like me.<br>• You can peel and eat me.</p>
+                    <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto">
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-2xl font-kids text-lg md:text-xl shadow-lg border-4 border-emerald-100">Apple</button>
+                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-6 rounded-2xl font-kids text-lg md:text-xl shadow-lg border-4 border-emerald-100">Banana</button>
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-2xl font-kids text-lg md:text-xl shadow-lg border-4 border-emerald-100">Carrot</button>
                     </div>
                 </div>
             `;
@@ -633,21 +639,21 @@
         function renderWordBuilderGame(container) {
             teacherTalk("Let us arrange the letters to spell CAR!");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs"><span class="icon-3d">⬅️</span> Games</button>
-                    <span class="font-kids text-indigo-700 text-xs md:text-sm">Game: Word Builder</span>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm text-gray-700"><span class="icon-3d">⬅️</span> Games</button>
+                    <span class="font-kids text-indigo-700 text-base md:text-lg">Game: Word Builder</span>
                     <div></div>
                 </div>
-                <div class="text-center space-y-3">
-                    <div class="text-6xl icon-3d">🚗</div>
-                    <p class="font-kids text-gray-600 text-sm">Spell the word: C - A - R</p>
-                    <div class="flex justify-center space-x-2">
-                        <span class="bg-indigo-100 text-indigo-800 font-kids text-xl px-3 py-1.5 rounded-xl border-2 border-indigo-300">R</span>
-                        <span class="bg-indigo-100 text-indigo-800 font-kids text-xl px-3 py-1.5 rounded-xl border-2 border-indigo-300">A</span>
-                        <span class="bg-indigo-100 text-indigo-800 font-kids text-xl px-3 py-1.5 rounded-xl border-2 border-indigo-300">C</span>
+                <div class="text-center space-y-6 w-full max-w-2xl my-auto p-8 bg-sky-50 rounded-3xl border-6 border-sky-200 shadow-2xl">
+                    <div class="text-8xl icon-huge">🚗</div>
+                    <p class="font-kids text-gray-700 text-xl">Spell the word: C - A - R</p>
+                    <div class="flex justify-center space-x-4">
+                        <span class="bg-indigo-100 text-indigo-800 font-kids text-3xl px-6 py-3 rounded-2xl border-4 border-indigo-300 shadow-inner">R</span>
+                        <span class="bg-indigo-100 text-indigo-800 font-kids text-3xl px-6 py-3 rounded-2xl border-4 border-indigo-300 shadow-inner">A</span>
+                        <span class="bg-indigo-100 text-indigo-800 font-kids text-3xl px-6 py-3 rounded-2xl border-4 border-indigo-300 shadow-inner">C</span>
                     </div>
                     <div>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-indigo-600 text-white font-kids px-5 py-2 rounded-2xl shadow text-sm">Tap to Order: C-A-R <span class="icon-3d">✅</span></button>
+                        <button onclick="handleCorrectAnswer()" class="card-3d bg-indigo-600 hover:bg-indigo-700 text-white font-kids px-8 py-4 rounded-2xl shadow-xl text-lg md:text-xl">Tap to Order: C-A-R <span class="icon-3d">✅</span></button>
                     </div>
                 </div>
             `;
@@ -656,18 +662,18 @@
         function renderStoryQuizGame(container) {
             teacherTalk("Answer the fun question based on the story!");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs"><span class="icon-3d">⬅️</span> Games</button>
-                    <span class="font-kids text-indigo-700 text-xs md:text-sm">Game: Story Quiz</span>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm text-gray-700"><span class="icon-3d">⬅️</span> Games</button>
+                    <span class="font-kids text-indigo-700 text-base md:text-lg">Game: Story Quiz</span>
                     <div></div>
                 </div>
-                <div class="text-center space-y-3 bg-yellow-50 p-4 md:p-6 rounded-3xl border-4 border-yellow-200 max-w-md mx-auto">
-                    <h3 class="font-kids text-base md:text-lg text-yellow-800">Story: "Ali visits the zoo and sees a big lion."</h3>
-                    <p class="font-kids text-indigo-700 text-base">Where did Ali go?</p>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-2.5 rounded-2xl font-kids text-sm shadow">School</button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-2.5 rounded-2xl font-kids text-sm shadow">Zoo</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-2.5 rounded-2xl font-kids text-sm shadow">Hospital</button>
+                <div class="text-center space-y-6 bg-yellow-50 p-6 md:p-10 rounded-3xl border-6 border-yellow-200 max-w-2xl mx-auto my-auto shadow-2xl">
+                    <h3 class="font-kids text-lg md:text-xl text-yellow-800">Story: "Ali visits the zoo and sees a big lion."</h3>
+                    <p class="font-kids text-indigo-700 text-2xl">Where did Ali go?</p>
+                    <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto">
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-2xl font-kids text-lg md:text-xl shadow-lg border-4 border-yellow-100">School</button>
+                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-6 rounded-2xl font-kids text-lg md:text-xl shadow-lg border-4 border-yellow-100">Zoo</button>
+                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-2xl font-kids text-lg md:text-xl shadow-lg border-4 border-yellow-100">Hospital</button>
                     </div>
                 </div>
             `;
@@ -689,17 +695,17 @@
         function renderExam(container) {
             teacherTalk("Yahoo! Welcome to the Challenge Exam! Let's test your super English skills!");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-3">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-3 py-1.5 rounded-2xl text-xs md:text-sm text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
-                    <h2 class="font-kids text-lg md:text-2xl text-purple-700"><span class="icon-3d">🏆</span> Challenge Exam</h2>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm md:text-base text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
+                    <h2 class="font-kids text-2xl md:text-3xl text-purple-700"><span class="icon-3d">🏆</span> Challenge Exam</h2>
                     <div></div>
                 </div>
-                <div class="bg-purple-50 p-4 md:p-6 rounded-3xl border-4 border-purple-200 shadow-md w-full max-w-md text-center space-y-3">
-                    <h3 class="font-kids text-lg text-purple-800">Question 1: Which one is a fruit?</h3>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="handleExamCorrect()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow flex flex-col items-center"><span class="icon-3d">🍎</span><span class="text-xs">Apple</span></button>
-                        <button onclick="handleExamWrong()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow flex flex-col items-center"><span class="icon-3d">🚗</span><span class="text-xs">Car</span></button>
-                        <button onclick="handleExamWrong()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow flex flex-col items-center"><span class="icon-3d">🩺</span><span class="text-xs">Doctor</span></button>
+                <div class="bg-purple-50 p-6 md:p-10 rounded-3xl border-6 border-purple-200 shadow-2xl w-full max-w-2xl text-center space-y-6 my-auto">
+                    <h3 class="font-kids text-2xl text-purple-800">Question 1: Which one is a fruit?</h3>
+                    <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto">
+                        <button onclick="handleExamCorrect()" class="card-3d bg-white p-6 rounded-3xl font-kids shadow-xl border-6 border-purple-100 flex flex-col items-center justify-center"><span class="icon-huge mb-2">🍎</span><span class="text-base">Apple</span></button>
+                        <button onclick="handleExamWrong()" class="card-3d bg-white p-6 rounded-3xl font-kids shadow-xl border-6 border-purple-100 flex flex-col items-center justify-center"><span class="icon-huge mb-2">🚗</span><span class="text-base">Car</span></button>
+                        <button onclick="handleExamWrong()" class="card-3d bg-white p-6 rounded-3xl font-kids shadow-xl border-6 border-purple-100 flex flex-col items-center justify-center"><span class="icon-huge mb-2">🩺</span><span class="text-base">Doctor</span></button>
                     </div>
                 </div>
             `;
@@ -720,26 +726,26 @@
         function renderProgress(container) {
             teacherTalk("Look how much you have learned! You are a superstar!");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-3">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-3 py-1.5 rounded-2xl text-xs md:text-sm text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
-                    <h2 class="font-kids text-lg md:text-2xl text-indigo-700"><span class="icon-3d">📊</span> My Learning Progress</h2>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm md:text-base text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
+                    <h2 class="font-kids text-2xl md:text-3xl text-indigo-700"><span class="icon-3d">📊</span> My Learning Progress</h2>
                     <div></div>
                 </div>
-                <div class="grid grid-cols-2 gap-3 w-full max-w-md mb-3">
-                    <div class="bg-yellow-100 border-4 border-yellow-300 p-3 rounded-3xl text-center shadow-sm">
-                        <span class="text-3xl icon-3d">📚</span>
-                        <h3 class="font-kids text-xl md:text-2xl text-yellow-700 mt-1">${state.vocabularyLearned}</h3>
-                        <p class="text-xs font-semibold text-gray-600">Words Learned</p>
+                <div class="grid grid-cols-2 gap-6 w-full max-w-xl mb-4">
+                    <div class="bg-yellow-100 border-6 border-yellow-300 p-6 rounded-3xl text-center shadow-lg">
+                        <span class="text-6xl icon-3d mb-2">📚</span>
+                        <h3 class="font-kids text-3xl md:text-4xl text-yellow-700 mt-2">${state.vocabularyLearned}</h3>
+                        <p class="text-sm md:text-base font-semibold text-gray-700">Words Learned</p>
                     </div>
-                    <div class="bg-sky-100 border-4 border-sky-300 p-3 rounded-3xl text-center shadow-sm">
-                        <span class="text-3xl icon-3d">🎮</span>
-                        <h3 class="font-kids text-xl md:text-2xl text-sky-700 mt-1">${state.gamesCompleted}</h3>
-                        <p class="text-xs font-semibold text-gray-600">Games Completed</p>
+                    <div class="bg-sky-100 border-6 border-sky-300 p-6 rounded-3xl text-center shadow-lg">
+                        <span class="text-6xl icon-3d mb-2">🎮</span>
+                        <h3 class="font-kids text-3xl md:text-4xl text-sky-700 mt-2">${state.gamesCompleted}</h3>
+                        <p class="text-sm md:text-base font-semibold text-gray-700">Games Completed</p>
                     </div>
                 </div>
-                <div class="bg-indigo-50 border-4 border-indigo-200 p-3 rounded-3xl text-center w-full max-w-md">
-                    <h4 class="font-kids text-indigo-800 text-xs">Parent Summary:</h4>
-                    <p class="text-xs text-gray-700 font-semibold mt-1">"My child learned ${state.vocabularyLearned} words and completed ${state.gamesCompleted} fun activities successfully!"[cite: 1]</p>
+                <div class="bg-indigo-50 border-6 border-indigo-200 p-6 rounded-3xl text-center w-full max-w-xl shadow-md">
+                    <h4 class="font-kids text-indigo-800 text-lg mb-1">Parent Summary:</h4>
+                    <p class="text-sm md:text-base text-gray-700 font-semibold">"My child learned ${state.vocabularyLearned} words and completed ${state.gamesCompleted} fun activities successfully!"[cite: 1]</p>
                 </div>
             `;
         }
@@ -747,26 +753,26 @@
         function renderRewards(container) {
             teacherTalk("Yay! Spend your earned coins on awesome badges and stickers!");
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-3">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-3 py-1.5 rounded-2xl text-xs md:text-sm text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
-                    <h2 class="font-kids text-lg md:text-2xl text-amber-700"><span class="icon-3d">🎁</span> Rewards & Stickers</h2>
+                <div class="w-full flex justify-between items-center mb-4 px-2">
+                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-sm md:text-base text-gray-700"><span class="icon-3d">⬅️</span> Home</button>
+                    <h2 class="font-kids text-2xl md:text-3xl text-amber-700"><span class="icon-3d">🎁</span> Rewards & Stickers</h2>
                     <div></div>
                 </div>
-                <div class="grid grid-cols-3 gap-3 w-full max-w-md text-center">
-                    <div class="bg-white border-4 border-amber-200 p-3 rounded-3xl shadow-md">
-                        <span class="text-4xl icon-3d">👑</span>
-                        <p class="font-kids text-xs md:text-sm mt-1">Golden Crown</p>
-                        <button onclick="buyReward(30)" class="mt-2 bg-amber-400 hover:bg-amber-500 text-white font-kids text-xs px-2.5 py-1 rounded-xl shadow">30 <span class="icon-3d">🪙</span></button>
+                <div class="grid grid-cols-3 gap-6 w-full max-w-3xl text-center my-auto">
+                    <div class="bg-white border-6 border-amber-200 p-6 rounded-3xl shadow-xl flex flex-col items-center justify-between">
+                        <span class="text-7xl icon-huge mb-2">👑</span>
+                        <p class="font-kids text-base md:text-lg mb-2">Golden Crown</p>
+                        <button onclick="buyReward(30)" class="bg-amber-400 hover:bg-amber-500 text-white font-kids text-sm md:text-base px-4 py-2 rounded-2xl shadow-md">30 <span class="icon-3d">🪙</span></button>
                     </div>
-                    <div class="bg-white border-4 border-amber-200 p-3 rounded-3xl shadow-md">
-                        <span class="text-4xl icon-3d">🦄</span>
-                        <p class="font-kids text-xs md:text-sm mt-1">Magic Unicorn</p>
-                        <button onclick="buyReward(50)" class="mt-2 bg-amber-400 hover:bg-amber-500 text-white font-kids text-xs px-2.5 py-1 rounded-xl shadow">50 <span class="icon-3d">🪙</span></button>
+                    <div class="bg-white border-6 border-amber-200 p-6 rounded-3xl shadow-xl flex flex-col items-center justify-between">
+                        <span class="text-7xl icon-huge mb-2">🦄</span>
+                        <p class="font-kids text-base md:text-lg mb-2">Magic Unicorn</p>
+                        <button onclick="buyReward(50)" class="bg-amber-400 hover:bg-amber-500 text-white font-kids text-sm md:text-base px-4 py-2 rounded-2xl shadow-md">50 <span class="icon-3d">🪙</span></button>
                     </div>
-                    <div class="bg-white border-4 border-amber-200 p-3 rounded-3xl shadow-md">
-                        <span class="text-4xl icon-3d">🚀</span>
-                        <p class="font-kids text-xs md:text-sm mt-1">Space Rocket</p>
-                        <button onclick="buyReward(40)" class="mt-2 bg-amber-400 hover:bg-amber-500 text-white font-kids text-xs px-2.5 py-1 rounded-xl shadow">40 <span class="icon-3d">🪙</span></button>
+                    <div class="bg-white border-6 border-amber-200 p-6 rounded-3xl shadow-xl flex flex-col items-center justify-between">
+                        <span class="text-7xl icon-huge mb-2">🚀</span>
+                        <p class="font-kids text-base md:text-lg mb-2">Space Rocket</p>
+                        <button onclick="buyReward(40)" class="bg-amber-400 hover:bg-amber-500 text-white font-kids text-sm md:text-base px-4 py-2 rounded-2xl shadow-md">40 <span class="icon-3d">🪙</span></button>
                     </div>
                 </div>
             `;
