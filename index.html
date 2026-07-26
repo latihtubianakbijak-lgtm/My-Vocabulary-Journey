@@ -171,14 +171,30 @@
                 { name: "Monkey", emoji: "🐵", clues: ["I love bananas.", "I climb trees.", "I swing from branch to branch."], sentence: "The monkey swings." }
             ],
             "Vehicles": [
-                { name: "Car", emoji: "🚗", clues: ["I have four wheels.", "I drive on roads.", "Beep beep!"], sentence: "The car is red." },
-                { name: "Bus", emoji: "🚌", clues: ["I am big and long.", "I carry many people.", "Children ride me to school."], sentence: "The school bus stops." },
-                { name: "Airplane", emoji: "✈️", clues: ["I fly in the sky.", "I have big wings.", "I carry passengers far away."], sentence: "The airplane flies high." }
+                { name: "Car", emoji: "🚗", clues: ["I have four wheels.", "People ride in me.", "I go on roads."], sentence: "The car goes fast on the road." },
+                { name: "Bus", emoji: "🚌", clues: ["I carry many people.", "I stop at bus stations.", "I am big."], sentence: "The bus carries passengers." },
+                { name: "Bicycle", emoji: "🚲", clues: ["I have two wheels.", "You use your legs to ride me.", "I am fun to pedal."], sentence: "I ride my bicycle." },
+                { name: "Motorcycle", emoji: "🏍️", clues: ["I have two wheels.", "I am faster than a bicycle.", "I have an engine."], sentence: "The motorcycle zooms by." },
+                { name: "Train", emoji: "🚆", clues: ["I move on tracks.", "I carry many passengers.", "Choo choo!"], sentence: "The train runs on tracks." },
+                { name: "Airplane", emoji: "✈️", clues: ["I fly in the sky.", "I carry people to far places.", "I have big wings."], sentence: "The airplane flies high." },
+                { name: "Boat", emoji: "⛵", clues: ["I travel on water.", "People ride inside me.", "I have sails or a motor."], sentence: "The boat floats on water." },
+                { name: "Ship", emoji: "🚢", clues: ["I am very big.", "I travel across the sea.", "I carry heavy cargo."], sentence: "The big ship crosses the ocean." },
+                { name: "Truck", emoji: "🚚", clues: ["I carry heavy things.", "I have big wheels.", "I have a large container space."], sentence: "The truck carries heavy goods." },
+                { name: "Van", emoji: "🚐", clues: ["I carry people or things.", "I have four wheels.", "I look like a big box car."], sentence: "The van is spacious." },
+                { name: "Fire Truck", emoji: "🚒", clues: ["I help fight fires.", "I have a big ladder.", "I make a loud siren sound."], sentence: "The fire truck rushes to help." }
             ],
             "Occupations": [
-                { name: "Doctor", emoji: "👩‍⚕️", clues: ["I help people feel better.", "I wear a white coat.", "I work in a hospital."], sentence: "The doctor helps sick people." },
-                { name: "Teacher", emoji: "👩‍🏫", clues: ["I teach children.", "I write on the chalkboard.", "I work in a school."], sentence: "My teacher is kind." },
-                { name: "Firefighter", emoji: "👨‍🚒", clues: ["I put out fires.", "I wear a red helmet.", "I drive a big red truck."], sentence: "The firefighter is brave." }
+                { name: "Doctor", emoji: "👩‍⚕️", clues: ["I help sick people.", "I wear a white coat.", "I work in a hospital."], sentence: "The doctor helps sick people feel better." },
+                { name: "Teacher", emoji: "👩‍🏫", clues: ["I teach children.", "I work at school.", "I help you learn."], sentence: "My teacher helps me learn new things." },
+                { name: "Policeman", emoji: "👮‍♂️", clues: ["I keep people safe.", "I wear a uniform.", "I catch bad people."], sentence: "The policeman keeps our neighborhood safe." },
+                { name: "Fireman", emoji: "👨‍🚒", clues: ["I put out fires.", "I wear a helmet.", "I help people in danger."], sentence: "The brave fireman puts out fires." },
+                { name: "Nurse", emoji: "👩‍⚕️", clues: ["I help doctors.", "I take care of sick people.", "I work in a hospital."], sentence: "The nurse takes care of patients." },
+                { name: "Chef", emoji: "👨‍🍳", clues: ["I cook delicious food.", "I work in a kitchen.", "I wear a chef hat."], sentence: "The chef cooks yummy food." },
+                { name: "Farmer", emoji: "👨‍🌾", clues: ["I grow plants.", "I take care of animals.", "I work on a farm."], sentence: "The farmer grows fresh vegetables." },
+                { name: "Pilot", emoji: "👨‍✈️", clues: ["I fly an airplane.", "I travel in the sky.", "I wear a uniform."], sentence: "The pilot flies us to another country." },
+                { name: "Dentist", emoji: "🦷", clues: ["I check your teeth.", "I help keep teeth healthy.", "I work in a clinic."], sentence: "The dentist keeps my teeth clean." },
+                { name: "Artist", emoji: "🎨", clues: ["I create pictures.", "I use colors and brushes.", "I love being creative."], sentence: "The artist paints a pretty picture." },
+                { name: "Baker", emoji: "🧑‍🍳", clues: ["I make bread and cakes.", "I work in a bakery.", "I use an oven."], sentence: "The baker bakes sweet cakes." }
             ],
             "Shapes": [
                 { name: "Circle", emoji: "🔴", clues: ["I am round like a ball.", "I have no straight lines.", "I look like the sun."], sentence: "A ball is a circle." },
@@ -486,8 +502,6 @@
                     renderQuizQuestion();
                 } else {
                     // Show small hint message modal/alert inline
-                    const container = document.getElementById('app-container');
-                    // Render incorrect feedback with hint
                     showIncorrectFeedback(currentItem);
                 }
             }
