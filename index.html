@@ -272,16 +272,21 @@
         // --- APPLICATION STATE ---
         let gameState = {
             stars: 0,
-            wordsLearned: 0,
+            beginnerWordsLearned: 0,
+            advancedCluesMastered: 0,
             correctAnswers: 0,
             timePlayed: 0, // in seconds
             soundEnabled: true,
+            currentLevel: 'beginner', // 'beginner' or 'advanced'
             currentCategory: null,
             gameQueue: [],
             currentQuestionIndex: 0,
             currentClueIndex: 0,
-            scoreThisSession: 0
+            attemptCount: 0
         };
+
+        // Calculate total words in database for progress max
+        const totalVocabularyCount = Object.values(vocabData).flat().length;
 
         // Timer interval
         setInterval(() => {
@@ -295,7 +300,8 @@
                 try {
                     const parsed = JSON.parse(saved);
                     gameState.stars = parsed.stars || 0;
-                    gameState.wordsLearned = parsed.wordsLearned || 0;
+                    gameState.beginnerWordsLearned = parsed.beginnerWordsLearned || 0;
+                    gameState.advancedCluesMastered = parsed.advancedCluesMastered || 0;
                     gameState.correctAnswers = parsed.correctAnswers || 0;
                     gameState.timePlayed = parsed.timePlayed || 0;
                 } catch(e) {}
@@ -306,7 +312,8 @@
         function saveStats() {
             localStorage.setItem('myFirstWordsState', JSON.stringify({
                 stars: gameState.stars,
-                wordsLearned: gameState.wordsLearned,
+                beginnerWordsLearned: gameState.beginnerWordsLearned,
+                advancedCluesMastered: gameState.advancedCluesMastered,
                 correctAnswers: gameState.correctAnswers,
                 timePlayed: gameState.timePlayed
             }));
@@ -315,7 +322,8 @@
             if (db) {
                 db.ref('stats/user_global').set({
                     stars: gameState.stars,
-                    wordsLearned: gameState.wordsLearned,
+                    beginnerWordsLearned: gameState.beginnerWordsLearned,
+                    advancedCluesMastered: gameState.advancedCluesMastered,
                     correctAnswers: gameState.correctAnswers,
                     lastUpdated: Date.now()
                 }).catch(() => {});
@@ -368,17 +376,17 @@
                 <div class="flex flex-col items-center text-center animate-pulse-scale">
                     <div class="text-7xl sm:text-8xl mb-2 animate-bounce-slow">🐱‍👤</div>
                     <h1 class="font-fun text-4xl sm:text-6xl text-rose-500 drop-shadow-md mb-1">Who Am I?</h1>
-                    <p class="font-fun text-lg sm:text-2xl text-purple-600 mb-6 drop-shadow-sm">Read the clues. Guess the picture!</p>
+                    <p class="font-fun text-lg sm:text-2xl text-purple-600 mb-6 drop-shadow-sm">Play, Learn & Discover Words!</p>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md px-4">
-                        <button onclick="router('categories', 'game')" class="btn-3d bg-emerald-400 hover:bg-emerald-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-emerald-200">
-                            <span>▶</span> Start Game
+                        <button onclick="renderLevelSelection('game')" class="btn-3d bg-emerald-400 hover:bg-emerald-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-emerald-200">
+                            <span>▶</span> Play Game
                         </button>
-                        <button onclick="router('categories', 'learn')" class="btn-3d bg-amber-400 hover:bg-amber-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-amber-200">
+                        <button onclick="renderLevelSelection('learn')" class="btn-3d bg-amber-400 hover:bg-amber-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-amber-200">
                             <span>📚</span> Learn Words
                         </button>
                         <button onclick="renderRewards()" class="btn-3d bg-sky-400 hover:bg-sky-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-sky-200 col-span-1 sm:col-span-2">
-                            <span>🏆</span> My Rewards
+                            <span>🏆</span> My Rewards & Progress
                         </button>
                     </div>
                 </div>
@@ -388,13 +396,44 @@
 
         let currentAppMode = 'game'; // 'game' or 'learn'
 
-        function router(view, mode = 'game') {
+        function renderLevelSelection(mode = 'game') {
             currentAppMode = mode;
-            if (view === 'home') {
-                renderHomeScreen();
-            } else if (view === 'categories') {
-                renderCategorySelection();
-            }
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="w-full max-w-2xl flex flex-col items-center">
+                    <div class="w-full flex justify-between items-center mb-6 px-2">
+                        <button onclick="renderHomeScreen()" class="bg-white/80 hover:bg-white px-4 py-2 rounded-2xl font-fun text-purple-600 shadow-md border-2 border-purple-300">
+                            ⬅ Home
+                        </button>
+                        <h2 class="font-fun text-2xl sm:text-3xl text-purple-700 drop-shadow-sm">Choose Your Level</h2>
+                        <div class="w-16"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full px-4">
+                        <!-- BEGINNER CARD -->
+                        <button onclick="selectLevelAndProceed('beginner')" class="btn-3d bg-white hover:bg-emerald-50 p-6 rounded-3xl flex flex-col items-center justify-center border-4 border-emerald-300 shadow-xl transition-transform active:scale-95 group text-center">
+                            <span class="text-6xl mb-3 group-hover:scale-110 transition-transform">🌱</span>
+                            <h3 class="font-fun text-2xl sm:text-3xl text-emerald-600 mb-2">BEGINNER</h3>
+                            <p class="font-fun text-sm sm:text-base text-slate-600 mb-4">Learn words with pictures</p>
+                            <span class="bg-emerald-100 text-emerald-700 font-fun px-4 py-1 rounded-full text-xs uppercase tracking-wider">Tap to Play</span>
+                        </button>
+
+                        <!-- ADVANCED CARD -->
+                        <button onclick="selectLevelAndProceed('advanced')" class="btn-3d bg-white hover:bg-purple-50 p-6 rounded-3xl flex flex-col items-center justify-center border-4 border-purple-300 shadow-xl transition-transform active:scale-95 group text-center">
+                            <span class="text-6xl mb-3 group-hover:scale-110 transition-transform">🚀</span>
+                            <h3 class="font-fun text-2xl sm:text-3xl text-purple-600 mb-2">ADVANCED</h3>
+                            <p class="font-fun text-sm sm:text-base text-slate-600 mb-4">Guess from clues</p>
+                            <span class="bg-purple-100 text-purple-700 font-fun px-4 py-1 rounded-full text-xs uppercase tracking-wider">Tap to Play</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            speakText("Choose your level. Beginner or Advanced.");
+        }
+
+        function selectLevelAndProceed(level) {
+            gameState.currentLevel = level;
+            renderCategorySelection();
         }
 
         // --- CATEGORY SELECTION VIEW ---
@@ -416,11 +455,11 @@
             container.innerHTML = `
                 <div class="w-full flex flex-col items-center">
                     <div class="w-full flex justify-between items-center mb-4 px-2">
-                        <button onclick="router('home')" class="bg-white/80 hover:bg-white px-4 py-2 rounded-2xl font-fun text-purple-600 shadow-md border-2 border-purple-300">
-                            ⬅ Back
+                        <button onclick="renderLevelSelection('${currentAppMode}')" class="bg-white/80 hover:bg-white px-4 py-2 rounded-2xl font-fun text-purple-600 shadow-md border-2 border-purple-300">
+                            ⬅ Level
                         </button>
                         <h2 class="font-fun text-2xl sm:text-3xl text-purple-700 drop-shadow-sm">
-                            ${currentAppMode === 'game' ? '🎮 Choose a Game Category' : '📚 Choose Learning Topic'}
+                            ${currentAppMode === 'game' ? `🎮 ${gameState.currentLevel.toUpperCase()} Mode` : '📚 Choose Learning Topic'}
                         </h2>
                         <div class="w-16"></div>
                     </div>
@@ -435,23 +474,136 @@
         function selectCategory(categoryName) {
             gameState.currentCategory = categoryName;
             if (currentAppMode === 'game') {
-                startQuizGame(categoryName);
+                if (gameState.currentLevel === 'beginner') {
+                    startBeginnerGame(categoryName);
+                } else {
+                    startAdvancedGame(categoryName);
+                }
             } else {
                 startLearnMode(categoryName);
             }
         }
 
-        // --- GAME MODE: WHO AM I? ---
-        function startQuizGame(categoryName) {
+        // --- BEGINNER LEVEL GAME MODE ---
+        function startBeginnerGame(categoryName) {
             const items = [...vocabData[categoryName]];
-            // Shuffle items for randomization
+            gameState.gameQueue = items.sort(() => 0.5 - Math.random());
+            gameState.currentQuestionIndex = 0;
+            gameState.attemptCount = 0;
+            renderBeginnerQuestion();
+        }
+
+        function renderBeginnerQuestion() {
+            const qList = gameState.gameQueue;
+            if (gameState.currentQuestionIndex >= qList.length) {
+                renderVictoryScreen();
+                return;
+            }
+
+            const currentItem = qList[gameState.currentQuestionIndex];
+            gameState.attemptCount = 0;
+
+            // Generate 3 choices (1 correct, 2 distractors)
+            let choices = [currentItem];
+            let allPool = Object.values(vocabData).flat().filter(i => i.name !== currentItem.name);
+            allPool = allPool.sort(() => 0.5 - Math.random());
+            choices.push(allPool[0], allPool[1]);
+            choices = choices.sort(() => 0.5 - Math.random());
+
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-6 rounded-3xl shadow-2xl border-4 border-emerald-300">
+                    <div class="w-full flex justify-between items-center mb-4">
+                        <button onclick="renderCategorySelection()" class="bg-emerald-100 hover:bg-emerald-200 px-3 py-1 rounded-xl font-fun text-emerald-700 text-sm">
+                            ⬅ Categories
+                        </button>
+                        <span class="font-fun text-emerald-600">Question ${gameState.currentQuestionIndex + 1} of ${qList.length}</span>
+                    </div>
+
+                    <h2 class="font-fun text-3xl text-emerald-700 mb-2">What is this?</h2>
+                    
+                    <!-- Large Picture Box -->
+                    <div class="w-40 h-40 sm:w-48 sm:h-48 bg-emerald-50 rounded-3xl flex items-center justify-center border-4 border-emerald-200 mb-6 shadow-md animate-bounce-slow">
+                        <span class="text-8xl sm:text-9xl">${currentItem.emoji}</span>
+                    </div>
+
+                    <!-- Answer Choices Grid (3 Options) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full" id="beginner-choices">
+                        ${choices.map((choice) => `
+                            <button onclick="checkBeginnerAnswer('${choice.name}', '${currentItem.name}')" id="choice-${choice.name}" class="btn-3d bg-emerald-100 hover:bg-emerald-200 border-3 border-emerald-300 p-4 rounded-2xl flex flex-col items-center justify-center gap-1 transition-transform active:scale-95">
+                                <span class="font-fun text-emerald-800 text-xl">${choice.name}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            speakText(`What is this?`);
+        }
+
+        function checkBeginnerAnswer(selectedName, correctName) {
+            const currentItem = vocabData[gameState.currentCategory].find(i => i.name === correctName);
+
+            if (selectedName === correctName) {
+                // Correct Answer!
+                gameState.stars += 1;
+                gameState.beginnerWordsLearned++;
+                gameState.correctAnswers += 1;
+                saveStats();
+                playSoundEffect('correct');
+
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
+
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-emerald-300 text-center animate-pulse-scale">
+                        <div class="text-7xl mb-2">🎉</div>
+                        <h2 class="font-fun text-4xl text-emerald-600 mb-2">Great Job!</h2>
+                        <p class="font-fun text-2xl text-slate-700 mb-4">It's a ${currentItem.name} ${currentItem.emoji}</p>
+                        <div class="bg-emerald-50 border-2 border-emerald-200 px-6 py-3 rounded-2xl mb-6 font-fun text-xl text-emerald-700">
+                            ⭐ +1 Star Earned!
+                        </div>
+                        <button onclick="nextBeginnerQuestion()" class="btn-3d bg-emerald-500 hover:bg-emerald-600 text-white font-fun text-xl py-3 px-8 rounded-2xl">
+                            Next Question ➡
+                        </button>
+                    </div>
+                `;
+                speakText(`Great Job! It's a ${currentItem.name}`);
+            } else {
+                gameState.attemptCount++;
+                playSoundEffect('incorrect');
+                
+                if (gameState.attemptCount >= 2) {
+                    // Highlight correct answer after 2 failed attempts
+                    const correctBtn = document.getElementById(`choice-${correctName}`);
+                    if (correctBtn) {
+                        correctBtn.classList.remove('bg-emerald-100', 'border-emerald-300');
+                        correctBtn.classList.add('bg-amber-300', 'border-amber-500', 'animate-pulse');
+                    }
+                    speakText(`Try again! The correct answer is ${correctName}`);
+                } else {
+                    speakText("Try again!");
+                }
+            }
+        }
+
+        function nextBeginnerQuestion() {
+            gameState.currentQuestionIndex++;
+            renderBeginnerQuestion();
+        }
+
+        // --- ADVANCED LEVEL GAME MODE ---
+        function startAdvancedGame(categoryName) {
+            const items = [...vocabData[categoryName]];
             gameState.gameQueue = items.sort(() => 0.5 - Math.random());
             gameState.currentQuestionIndex = 0;
             gameState.currentClueIndex = 0;
-            renderQuizQuestion();
+            gameState.attemptCount = 0;
+            renderAdvancedQuestion();
         }
 
-        function renderQuizQuestion() {
+        function renderAdvancedQuestion() {
             const qList = gameState.gameQueue;
             if (gameState.currentQuestionIndex >= qList.length) {
                 renderVictoryScreen();
@@ -462,7 +614,7 @@
             const maxClues = currentItem.clues.length;
             const currentClue = currentItem.clues[gameState.currentClueIndex];
 
-            // Generate 3 choices (1 correct, 2 distractors from same category or pool)
+            // Generate 3 choices (1 correct, 2 distractors)
             let choices = [currentItem];
             let allPool = Object.values(vocabData).flat().filter(i => i.name !== currentItem.name);
             allPool = allPool.sort(() => 0.5 - Math.random());
@@ -471,9 +623,9 @@
 
             const container = document.getElementById('app-container');
             container.innerHTML = `
-                <div class="w-full max-w-xl flex flex-col items-center bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-2xl border-4 border-amber-300">
+                <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-6 rounded-3xl shadow-2xl border-4 border-amber-300">
                     <div class="w-full flex justify-between items-center mb-4">
-                        <button onclick="router('categories', 'game')" class="bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-xl font-fun text-amber-700 text-sm">
+                        <button onclick="renderCategorySelection()" class="bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-xl font-fun text-amber-700 text-sm">
                             ⬅ Categories
                         </button>
                         <span class="font-fun text-amber-600">Question ${gameState.currentQuestionIndex + 1} of ${qList.length}</span>
@@ -488,7 +640,7 @@
 
                     <!-- Clue Card -->
                     <div class="w-full bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6 text-center shadow-sm">
-                        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 block mb-1">Clue ${gameState.currentClueIndex + 1} of ${maxClues}</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 block mb-1">Clue ${gameState.currentClueIndex + 1} of ${maxClues} (${gameState.currentClueIndex === 0 ? 'Easy' : gameState.currentClueIndex === 1 ? 'Medium' : 'Hard'})</span>
                         <p class="font-fun text-xl sm:text-2xl text-slate-700" id="clue-text">"${currentClue}"</p>
                         <button onclick="speakText('${currentClue}')" class="mt-2 bg-amber-200 hover:bg-amber-300 px-3 py-1 rounded-full font-fun text-xs text-amber-800">
                             🔊 Read Clue
@@ -497,8 +649,8 @@
 
                     <!-- Answer Choices Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-                        ${choices.map((choice, idx) => `
-                            <button onclick="checkAnswer('${choice.name}', '${currentItem.name}')" class="btn-3d bg-purple-100 hover:bg-purple-200 border-3 border-purple-300 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-transform active:scale-95">
+                        ${choices.map((choice) => `
+                            <button onclick="checkAdvancedAnswer('${choice.name}', '${currentItem.name}')" class="btn-3d bg-purple-100 hover:bg-purple-200 border-3 border-purple-300 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-transform active:scale-95">
                                 <span class="text-3xl">${choice.emoji}</span>
                                 <span class="font-fun text-purple-800 text-lg">${choice.name}</span>
                             </button>
@@ -509,15 +661,18 @@
             speakText(`Who am I? ${currentClue}`);
         }
 
-        function checkAnswer(selectedName, correctName) {
+        function checkAdvancedAnswer(selectedName, correctName) {
             const currentItem = vocabData[gameState.currentCategory].find(i => i.name === correctName);
             const maxClues = currentItem.clues.length;
 
             if (selectedName === correctName) {
-                // Correct Answer!
-                gameState.stars += 1;
+                // Correct Answer! Star reward based on attempts
+                let earnedStars = 3 - gameState.attemptCount;
+                if (earnedStars < 1) earnedStars = 1;
+
+                gameState.stars += earnedStars;
                 gameState.correctAnswers += 1;
-                gameState.wordsLearned += 1;
+                gameState.advancedCluesMastered++;
                 saveStats();
                 playSoundEffect('correct');
 
@@ -530,47 +685,48 @@
                     <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-emerald-300 text-center animate-pulse-scale">
                         <div class="text-7xl mb-2">🎉</div>
                         <h2 class="font-fun text-4xl text-emerald-600 mb-2">Great Job!</h2>
-                        <p class="font-fun text-2xl text-slate-700 mb-4">Yay! You got it! It's a ${currentItem.name} ${currentItem.emoji}</p>
+                        <p class="font-fun text-2xl text-slate-700 mb-4">It's a ${currentItem.name} ${currentItem.emoji}</p>
                         <div class="bg-emerald-50 border-2 border-emerald-200 px-6 py-3 rounded-2xl mb-6 font-fun text-xl text-emerald-700">
-                            ⭐ +1 Star Earned!
+                            ⭐ +${earnedStars} Stars Earned!
                         </div>
-                        <button onclick="nextQuestion()" class="btn-3d bg-emerald-500 hover:bg-emerald-600 text-white font-fun text-xl py-3 px-8 rounded-2xl">
+                        <button onclick="nextAdvancedQuestion()" class="btn-3d bg-emerald-500 hover:bg-emerald-600 text-white font-fun text-xl py-3 px-8 rounded-2xl">
                             Next Question ➡
                         </button>
                     </div>
                 `;
                 speakText(`Yay! You got it! It's a ${currentItem.name}`);
             } else {
-                // Incorrect Answer -> Provide next clue if available, else retry
                 playSoundEffect('incorrect');
+                gameState.attemptCount++;
                 if (gameState.currentClueIndex < maxClues - 1) {
                     gameState.currentClueIndex++;
-                    renderQuizQuestion();
+                    renderAdvancedQuestion();
                 } else {
-                    showIncorrectFeedback(currentItem);
+                    showIncorrectAdvancedFeedback(currentItem);
                 }
             }
         }
 
-        function showIncorrectFeedback(currentItem) {
+        function showIncorrectAdvancedFeedback(currentItem) {
             const container = document.getElementById('app-container');
             container.innerHTML = `
                 <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-rose-300 text-center">
                     <div class="text-6xl mb-2">💡</div>
-                    <h2 class="font-fun text-3xl text-rose-500 mb-2">Try Again!</h2>
-                    <p class="font-fun text-xl text-slate-700 mb-4">Look at my color and features!</p>
-                    <button onclick="renderQuizQuestion()" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white font-fun text-xl py-3 px-8 rounded-2xl">
-                        Try Again 🔄
+                    <h2 class="font-fun text-3xl text-rose-500 mb-2">Good Try!</h2>
+                    <p class="font-fun text-xl text-slate-700 mb-4">The correct answer was a ${currentItem.name} ${currentItem.emoji}</p>
+                    <button onclick="nextAdvancedQuestion()" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white font-fun text-xl py-3 px-8 rounded-2xl">
+                        Continue ➡
                     </button>
                 </div>
             `;
-            speakText("Try again! Look at my color.");
+            speakText(`The correct answer was a ${currentItem.name}`);
         }
 
-        function nextQuestion() {
+        function nextAdvancedQuestion() {
             gameState.currentQuestionIndex++;
             gameState.currentClueIndex = 0;
-            renderQuizQuestion();
+            gameState.attemptCount = 0;
+            renderAdvancedQuestion();
         }
 
         function renderVictoryScreen() {
@@ -581,10 +737,10 @@
                     <h2 class="font-fun text-4xl text-amber-500 mb-2">Fantastic!</h2>
                     <p class="font-fun text-xl text-slate-700 mb-6">You finished all questions in this category!</p>
                     <div class="flex gap-4 justify-center">
-                        <button onclick="router('categories', 'game')" class="btn-3d bg-purple-500 hover:bg-purple-600 text-white font-fun text-lg py-3 px-6 rounded-2xl">
+                        <button onclick="renderLevelSelection('game')" class="btn-3d bg-purple-500 hover:bg-purple-600 text-white font-fun text-lg py-3 px-6 rounded-2xl">
                             More Games 🎮
                         </button>
-                        <button onclick="router('home')" class="btn-3d bg-sky-400 hover:bg-sky-500 text-white font-fun text-lg py-3 px-6 rounded-2xl">
+                        <button onclick="renderHomeScreen()" class="btn-3d bg-sky-400 hover:bg-sky-500 text-white font-fun text-lg py-3 px-6 rounded-2xl">
                             Home 🏠
                         </button>
                     </div>
@@ -607,7 +763,7 @@
                 container.innerHTML = `
                     <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl border-4 border-amber-300">
                         <div class="w-full flex justify-between items-center mb-4">
-                            <button onclick="router('categories', 'learn')" class="bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-xl font-fun text-amber-700 text-sm">
+                            <button onclick="renderCategorySelection()" class="bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-xl font-fun text-amber-700 text-sm">
                                 ⬅ Categories
                             </button>
                             <span class="font-fun text-amber-600">${currentIndex + 1} / ${items.length}</span>
@@ -665,22 +821,22 @@
             renderCard();
         }
 
-        // --- REWARDS SYSTEM ---
+        // --- REWARDS & PROGRESS SYSTEM ---
         function renderRewards() {
             const stars = gameState.stars;
             let badge = "Beginner Learner";
-            if (stars >= 50) badge = "Word Master 👑";
-            else if (stars >= 30) badge = "Vocabulary Explorer 🚀";
-            else if (stars >= 10) badge = "Super Learner ⭐";
+            if (stars >= 50) badge = "Vocabulary Master 🏆";
+            else if (stars >= 30) badge = "Clue Detective 🔍";
+            else if (stars >= 10) badge = "Word Explorer 🌱";
 
             const container = document.getElementById('app-container');
             container.innerHTML = `
                 <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-sky-300 text-center">
                     <div class="w-full flex justify-between items-center mb-4">
-                        <button onclick="router('home')" class="bg-sky-100 hover:bg-sky-200 px-3 py-1 rounded-xl font-fun text-sky-700 text-sm">
+                        <button onclick="renderHomeScreen()" class="bg-sky-100 hover:bg-sky-200 px-3 py-1 rounded-xl font-fun text-sky-700 text-sm">
                             ⬅ Home
                         </button>
-                        <h2 class="font-fun text-2xl text-sky-700">My Rewards</h2>
+                        <h2 class="font-fun text-2xl text-sky-700">My Rewards & Progress</h2>
                         <div class="w-12"></div>
                     </div>
 
@@ -688,19 +844,38 @@
                     <div class="font-fun text-4xl text-amber-500 mb-1">${stars} Stars</div>
                     <p class="font-fun text-xl text-purple-600 mb-6">Current Badge: <span class="text-rose-500">${badge}</span></p>
 
+                    <!-- Separate Progress Tracking -->
+                    <div class="w-full flex flex-col gap-3 mb-6">
+                        <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 text-left">
+                            <span class="font-fun text-emerald-700 block text-sm mb-1">🌱 Beginner Progress (Words Learned)</span>
+                            <div class="w-full bg-emerald-200 rounded-full h-4 overflow-hidden mb-1">
+                                <div class="bg-emerald-500 h-full rounded-full" style="width: ${Math.min(100, (gameState.beginnerWordsLearned / totalVocabularyCount) * 100)}%;"></div>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600">${gameState.beginnerWordsLearned} / ${totalVocabularyCount} words completed</span>
+                        </div>
+
+                        <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 text-left">
+                            <span class="font-fun text-purple-700 block text-sm mb-1">🚀 Advanced Progress (Clues Mastered)</span>
+                            <div class="w-full bg-purple-200 rounded-full h-4 overflow-hidden mb-1">
+                                <div class="bg-purple-500 h-full rounded-full" style="width: ${Math.min(100, (gameState.advancedCluesMastered / totalVocabularyCount) * 100)}%;"></div>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600">${gameState.advancedCluesMastered} / ${totalVocabularyCount} words mastered</span>
+                        </div>
+                    </div>
+
                     <!-- Milestone Checklist -->
                     <div class="w-full bg-sky-50 border-2 border-sky-200 rounded-2xl p-4 flex flex-col gap-3 text-left">
                         <div class="flex items-center justify-between font-fun text-slate-700">
-                            <span>⭐ 10 Stars: Super Learner</span>
-                            <span>${stars >= 10 ? '✅' : '🔒'}</span>
+                            <span>🌱 Word Explorer (Complete Beginner)</span>
+                            <span>${gameState.beginnerWordsLearned >= totalVocabularyCount ? '✅' : '🔒'}</span>
                         </div>
                         <div class="flex items-center justify-between font-fun text-slate-700">
-                            <span>⭐ 30 Stars: Vocabulary Explorer</span>
-                            <span>${stars >= 30 ? '✅' : '🔒'}</span>
+                            <span>🔍 Clue Detective (50 Advanced)</span>
+                            <span>${gameState.advancedCluesMastered >= 50 ? '✅' : '🔒'}</span>
                         </div>
                         <div class="flex items-center justify-between font-fun text-slate-700">
-                            <span>⭐ 50 Stars: Word Master</span>
-                            <span>${stars >= 50 ? '✅' : '🔒'}</span>
+                            <span>🏆 Vocabulary Master (All Categories)</span>
+                            <span>${(gameState.beginnerWordsLearned >= totalVocabularyCount && gameState.advancedCluesMastered >= totalVocabularyCount) ? '✅' : '🔒'}</span>
                         </div>
                     </div>
                 </div>
@@ -740,7 +915,7 @@
             container.innerHTML = `
                 <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-purple-400">
                     <div class="w-full flex justify-between items-center mb-4">
-                        <button onclick="router('home')" class="bg-purple-100 hover:bg-purple-200 px-3 py-1 rounded-xl font-fun text-purple-700 text-sm">
+                        <button onclick="renderHomeScreen()" class="bg-purple-100 hover:bg-purple-200 px-3 py-1 rounded-xl font-fun text-purple-700 text-sm">
                             ⬅ Exit Parent Mode
                         </button>
                         <h2 class="font-fun text-2xl text-purple-700">👨‍👩‍👧 Parent Dashboard</h2>
@@ -754,14 +929,14 @@
                             <p class="text-xs text-slate-500 font-bold uppercase">Stars Collected</p>
                         </div>
                         <div class="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-2xl text-center">
-                            <span class="text-3xl block mb-1">📚</span>
-                            <span class="font-fun text-2xl text-emerald-700">${gameState.wordsLearned}</span>
-                            <p class="text-xs text-slate-500 font-bold uppercase">Words Learned</p>
+                            <span class="text-3xl block mb-1">🌱</span>
+                            <span class="font-fun text-2xl text-emerald-700">${gameState.beginnerWordsLearned}</span>
+                            <p class="text-xs text-slate-500 font-bold uppercase">Beginner Learned</p>
                         </div>
                         <div class="bg-amber-50 border-2 border-amber-200 p-4 rounded-2xl text-center">
-                            <span class="text-3xl block mb-1">🎯</span>
-                            <span class="font-fun text-2xl text-amber-700">${gameState.correctAnswers}</span>
-                            <p class="text-xs text-slate-500 font-bold uppercase">Correct Answers</p>
+                            <span class="text-3xl block mb-1">🚀</span>
+                            <span class="font-fun text-2xl text-amber-700">${gameState.advancedCluesMastered}</span>
+                            <p class="text-xs text-slate-500 font-bold uppercase">Advanced Mastered</p>
                         </div>
                         <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-2xl text-center">
                             <span class="text-3xl block mb-1">⏱️</span>
@@ -780,7 +955,8 @@
         function resetStats() {
             if (confirm("Are you sure you want to reset all learning progress?")) {
                 gameState.stars = 0;
-                gameState.wordsLearned = 0;
+                gameState.beginnerWordsLearned = 0;
+                gameState.advancedCluesMastered = 0;
                 gameState.correctAnswers = 0;
                 gameState.timePlayed = 0;
                 saveStats();
