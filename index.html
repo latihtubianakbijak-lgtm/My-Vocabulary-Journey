@@ -87,7 +87,7 @@
             <button onclick="toggleSfx()" id="sfx-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-sky-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-sky-700" title="Toggle SFX">
                 🔊 <span id="sfx-status" class="text-xs">ON</span>
             </button>
-            <button onclick="toggleVoice()" id="voice-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-rose-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-rose-700" title="Toggle Voice Pronunciation">
+            <button onclick="toggleVoice()" id="voice-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-rose-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-rose-700" title="Toggle Vocabulary Voice">
                 🗣️ <span id="voice-status" class="text-xs">ON</span>
             </button>
             <button onclick="openParentMode()" class="bg-white/85 hover:bg-white px-3 py-1.5 rounded-full shadow-md border-2 border-purple-300 font-fun text-xs sm:text-sm text-purple-600 transition-transform active:scale-95">
@@ -279,7 +279,7 @@
         let gameState = {
             stars: 0,
             beginnerWordsLearned: 0,
-            advancedAttemptsMastered: 0,
+            advancedCluesMastered: 0,
             correctAnswers: 0,
             timePlayed: 0,
             musicEnabled: true,
@@ -302,13 +302,13 @@
 
         // Load stats from localStorage
         function loadStats() {
-            const saved = localStorage.getItem('myFirstWordsStateAttemptUpdate');
+            const saved = localStorage.getItem('myFirstWordsStateAutoVoice');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
                     gameState.stars = parsed.stars || 0;
                     gameState.beginnerWordsLearned = parsed.beginnerWordsLearned || 0;
-                    gameState.advancedAttemptsMastered = parsed.advancedAttemptsMastered || 0;
+                    gameState.advancedCluesMastered = parsed.advancedCluesMastered || 0;
                     gameState.correctAnswers = parsed.correctAnswers || 0;
                     gameState.timePlayed = parsed.timePlayed || 0;
                     if (parsed.musicEnabled !== undefined) gameState.musicEnabled = parsed.musicEnabled;
@@ -321,10 +321,10 @@
         }
 
         function saveStats() {
-            localStorage.setItem('myFirstWordsStateAttemptUpdate', JSON.stringify({
+            localStorage.setItem('myFirstWordsStateAutoVoice', JSON.stringify({
                 stars: gameState.stars,
                 beginnerWordsLearned: gameState.beginnerWordsLearned,
-                advancedAttemptsMastered: gameState.advancedAttemptsMastered,
+                advancedCluesMastered: gameState.advancedCluesMastered,
                 correctAnswers: gameState.correctAnswers,
                 timePlayed: gameState.timePlayed,
                 musicEnabled: gameState.musicEnabled,
@@ -333,10 +333,10 @@
             }));
 
             if (db) {
-                db.ref('stats/user_global_attempt_update').set({
+                db.ref('stats/user_global_auto_voice').set({
                     stars: gameState.stars,
                     beginnerWordsLearned: gameState.beginnerWordsLearned,
-                    advancedAttemptsMastered: gameState.advancedAttemptsMastered,
+                    advancedCluesMastered: gameState.advancedCluesMastered,
                     correctAnswers: gameState.correctAnswers,
                     lastUpdated: Date.now()
                 }).catch(() => {});
@@ -826,14 +826,9 @@
                         <span class="text-6xl sm:text-7xl animate-pulse">❓</span>
                     </div>
 
-                    <div class="w-full bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-4 text-center shadow-sm">
+                    <div class="w-full bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6 text-center shadow-sm">
                         <span class="text-xs font-bold uppercase tracking-wider text-amber-600 block mb-1">Clue ${gameState.currentClueIndex + 1} of ${maxClues} (${gameState.currentClueIndex === 0 ? 'Easy' : gameState.currentClueIndex === 1 ? 'Medium' : 'Hard'})</span>
                         <p class="font-fun text-xl sm:text-2xl text-slate-700" id="clue-text">"${currentClue}"</p>
-                    </div>
-
-                    <!-- Attempt feedback tracker notice -->
-                    <div id="attempt-feedback-box" class="w-full text-center mb-4 font-fun text-purple-600 text-sm">
-                        ${gameState.attemptCount === 0 ? 'Attempt 1 - Make your guess!' : gameState.attemptCount === 1 ? 'Attempt 2 - Try Again!' : 'Attempt 3 - Look carefully!'}
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
@@ -859,7 +854,7 @@
 
                 gameState.stars += earnedStars;
                 gameState.correctAnswers += 1;
-                gameState.advancedAttemptsMastered++;
+                gameState.advancedCluesMastered++;
                 saveStats();
                 playSfx('correct');
                 playSfx('star');
@@ -886,16 +881,6 @@
             } else {
                 playSfx('wrong');
                 gameState.attemptCount++;
-                
-                if (gameState.attemptCount === 1) {
-                    // Feedback text for Attempt 1 incorrect
-                    const fb = document.getElementById('attempt-feedback-box');
-                    if (fb) fb.innerText = "Attempt 1 - Try Again!";
-                } else if (gameState.attemptCount === 2) {
-                    const fb = document.getElementById('attempt-feedback-box');
-                    if (fb) fb.innerText = "Attempt 2 - Look carefully!";
-                }
-
                 if (gameState.currentClueIndex < maxClues - 1) {
                     gameState.currentClueIndex++;
                     renderAdvancedQuestion();
@@ -910,7 +895,7 @@
             container.innerHTML = `
                 <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-rose-300 text-center">
                     <div class="text-6xl mb-2">💡</div>
-                    <h2 class="font-fun text-3xl text-rose-500 mb-2">Attempt 3 - Good try!</h2>
+                    <h2 class="font-fun text-3xl text-rose-500 mb-2">Good Try!</h2>
                     <p class="font-fun text-xl text-slate-700 mb-4">The correct answer was a ${currentItem.name} ${currentItem.emoji}</p>
                     <button onclick="playSfx('click'); nextAdvancedQuestion()" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white font-fun text-xl py-3 px-8 rounded-2xl">
                         Continue ➡
@@ -951,7 +936,7 @@
             }
         }
 
-        // --- LEARN WORDS MODE (UPDATED WITH PRONUNCIATION VOICE & NO LEVEL RESTRICTION) ---
+        // --- LEARN WORDS MODE (UPDATED WITH AUTOMATIC VOICE & REPLAY BUTTON) ---
         function startLearnMode(categoryName) {
             startBgm('beginner');
             const items = vocabData[categoryName];
@@ -959,6 +944,10 @@
 
             function renderCard() {
                 const item = items[currentIndex];
+                
+                // Automatically play pronunciation voice when card opens
+                speakWord(item.name);
+
                 const container = document.getElementById('app-container');
                 container.innerHTML = `
                     <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl border-4 border-amber-300">
@@ -973,10 +962,10 @@
                             <span class="text-8xl sm:text-9xl mb-2 animate-bounce-slow">${item.emoji}</span>
                         </div>
 
-                        <div class="flex items-center gap-3 mb-3">
+                        <div class="flex flex-col items-center gap-2 mb-3">
                             <h2 class="font-fun text-3xl sm:text-4xl text-purple-700 uppercase tracking-wide">${item.name}</h2>
-                            <button onclick="playSfx('click'); speakWord('${item.name}')" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white p-2.5 rounded-full shadow-md flex items-center justify-center transition-transform active:scale-95" title="Pronounce Word">
-                                <span class="text-xl">🔊</span>
+                            <button onclick="playSfx('click'); speakWord('${item.name}')" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white font-fun px-4 py-2 rounded-2xl shadow-md flex items-center gap-2 text-sm transition-transform active:scale-95" title="Listen Again">
+                                <span>🔊</span> <span>Listen Again</span>
                             </button>
                         </div>
 
@@ -1019,7 +1008,7 @@
             const stars = gameState.stars;
             let badge = "Beginner Learner";
             if (stars >= 50) badge = "Vocabulary Master 🏆";
-            else if (stars >= 30) badge = "Attempt Detective 🔍";
+            else if (stars >= 30) badge = "Clue Detective 🔍";
             else if (stars >= 10) badge = "Word Explorer 🌱";
 
             const container = document.getElementById('app-container');
@@ -1047,11 +1036,11 @@
                         </div>
 
                         <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 text-left">
-                            <span class="font-fun text-purple-700 block text-sm mb-1">🚀 Advanced Progress (Attempts Mastered)</span>
+                            <span class="font-fun text-purple-700 block text-sm mb-1">🚀 Advanced Progress (Clues Mastered)</span>
                             <div class="w-full bg-purple-200 rounded-full h-4 overflow-hidden mb-1">
-                                <div class="bg-purple-500 h-full rounded-full" style="width: ${Math.min(100, (gameState.advancedAttemptsMastered / totalVocabularyCount) * 100)}%;"></div>
+                                <div class="bg-purple-500 h-full rounded-full" style="width: ${Math.min(100, (gameState.advancedCluesMastered / totalVocabularyCount) * 100)}%;"></div>
                             </div>
-                            <span class="text-xs font-bold text-slate-600">${gameState.advancedAttemptsMastered} / ${totalVocabularyCount} words mastered</span>
+                            <span class="text-xs font-bold text-slate-600">${gameState.advancedCluesMastered} / ${totalVocabularyCount} words mastered</span>
                         </div>
                     </div>
 
@@ -1061,12 +1050,12 @@
                             <span>${gameState.beginnerWordsLearned >= totalVocabularyCount ? '✅' : '🔒'}</span>
                         </div>
                         <div class="flex items-center justify-between font-fun text-slate-700">
-                            <span>🔍 Attempt Detective (50 Advanced)</span>
-                            <span>${gameState.advancedAttemptsMastered >= 50 ? '✅' : '🔒'}</span>
+                            <span>🔍 Clue Detective (50 Advanced)</span>
+                            <span>${gameState.advancedCluesMastered >= 50 ? '✅' : '🔒'}</span>
                         </div>
                         <div class="flex items-center justify-between font-fun text-slate-700">
                             <span>🏆 Vocabulary Master (All Categories)</span>
-                            <span>${(gameState.beginnerWordsLearned >= totalVocabularyCount && gameState.advancedAttemptsMastered >= totalVocabularyCount) ? '✅' : '🔒'}</span>
+                            <span>${(gameState.beginnerWordsLearned >= totalVocabularyCount && gameState.advancedCluesMastered >= totalVocabularyCount) ? '✅' : '🔒'}</span>
                         </div>
                     </div>
                 </div>
@@ -1129,7 +1118,7 @@
                         </div>
                         <div class="bg-amber-50 border-2 border-amber-200 p-4 rounded-2xl text-center">
                             <span class="text-3xl block mb-1">🚀</span>
-                            <span class="font-fun text-2xl text-amber-700">${gameState.advancedAttemptsMastered}</span>
+                            <span class="font-fun text-2xl text-amber-700">${gameState.advancedCluesMastered}</span>
                             <p class="text-xs text-slate-500 font-bold uppercase">Advanced Mastered</p>
                         </div>
                         <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-2xl text-center">
@@ -1150,7 +1139,7 @@
             if (confirm("Are you sure you want to reset all learning progress?")) {
                 gameState.stars = 0;
                 gameState.beginnerWordsLearned = 0;
-                gameState.advancedAttemptsMastered = 0;
+                gameState.advancedCluesMastered = 0;
                 gameState.correctAnswers = 0;
                 gameState.timePlayed = 0;
                 saveStats();
