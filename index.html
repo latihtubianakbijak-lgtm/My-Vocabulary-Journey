@@ -2,19 +2,121 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Adventure: Fun English for Kids!</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Fredoka One / Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti for celebrations -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My First Words - Who Am I?</title>
+    <!-- Google Fonts for playful typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS for layout & utility styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Canvas Confetti for celebratory rewards -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            overflow-x: hidden;
+        }
+        .font-fun {
+            font-family: 'Fredoka One', cursive, sans-serif;
+        }
+        /* 3D Button Press Effect */
+        .btn-3d {
+            transition: all 0.1s ease;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.1);
+        }
+        /* Bounce Animation */
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 2.5s infinite ease-in-out;
+        }
+        /* Pulse Gimmick */
+        @keyframes pulse-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-scale {
+            animation: pulse-scale 1.5s infinite ease-in-out;
+        }
+        /* Custom Scrollbar for kids */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.5);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff6b81;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col items-center justify-between p-3 sm:p-6 relative">
 
+    <!-- Background Decorative Elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-10 left-10 text-6xl opacity-40 animate-bounce-slow">☁️</div>
+        <div class="absolute top-20 right-12 text-6xl opacity-40 animate-bounce-slow" style="animation-delay: 1s;">🎈</div>
+        <div class="absolute bottom-10 left-20 text-6xl opacity-40 animate-bounce-slow" style="animation-delay: 0.5s;">⭐</div>
+        <div class="absolute bottom-20 right-10 text-6xl opacity-40 animate-bounce-slow" style="animation-delay: 1.5s;">🌈</div>
+    </div>
+
+    <!-- Top Header Bar (Global Stats & Audio) -->
+    <header class="w-full max-w-4xl flex justify-between items-center z-10 mb-2">
+        <div class="flex items-center bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-md border-2 border-amber-300">
+            <span class="text-2xl mr-2">⭐</span>
+            <span id="star-count" class="font-fun text-xl text-amber-500">0</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="toggleSound()" id="sound-btn" class="bg-white/80 hover:bg-white p-3 rounded-full shadow-md border-2 border-blue-300 transition-transform active:scale-95 text-xl">
+                🔊
+            </button>
+            <button onclick="openParentMode()" class="bg-white/80 hover:bg-white px-4 py-2 rounded-full shadow-md border-2 border-purple-300 font-fun text-sm text-purple-600 transition-transform active:scale-95">
+                🔒 Parent Mode
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main id="app-container" class="w-full max-w-4xl flex-1 flex flex-col items-center justify-center z-10 my-auto">
+        <!-- Dynamic views injected here -->
+    </main>
+
+    <!-- Footer Credit -->
+    <footer class="w-full max-w-4xl text-center text-xs font-semibold text-slate-500 z-10 mt-2">
+        My First Words 🌟 Kindergarten Learning Game
+    </footer>
+
+    <!-- Parent Mode PIN Modal -->
+    <div id="pin-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border-4 border-purple-400 text-center animate-pulse-scale">
+            <h3 class="font-fun text-2xl text-purple-600 mb-2">🔒 Parents Only!</h3>
+            <p class="text-sm text-slate-600 mb-4">Please solve this simple math problem to enter:</p>
+            <div id="math-question" class="font-fun text-xl text-slate-700 mb-4 bg-purple-50 py-2 rounded-xl">3 + 4 = ?</div>
+            <input type="number" id="math-answer" class="w-32 text-center text-2xl font-fun border-2 border-purple-300 rounded-xl p-2 mb-4 focus:outline-none focus:border-purple-500" placeholder="?">
+            <div class="flex gap-2 justify-center">
+                <button onclick="verifyPin()" class="bg-emerald-400 hover:bg-emerald-500 text-white font-fun px-6 py-2 rounded-2xl btn-3D">Enter</button>
+                <button onclick="closeParentMode()" class="bg-rose-400 hover:bg-rose-500 text-white font-fun px-6 py-2 rounded-2xl btn-3D">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- FIREBASE INITIALIZATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyDodIPBPDYl2htLj2IVgC1bRb7DsGj7jpM",
             authDomain: "my-vocab-journey.firebaseapp.com",
@@ -24,804 +126,613 @@
             messagingSenderId: "410781508083",
             appId: "1:410781508083:web:7480cf6fcc510542fb3286"
         };
+        
+        let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } catch (e) {
+            console.warn("Firebase offline or initialization error:", e);
+        }
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        window.db = db;
-        window.dbRef = ref;
-        window.dbSet = set;
-        window.dbGet = get;
-        window.dbChild = child;
-    </script>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        .font-kids {
-            font-family: 'Fredoka One', cursive, sans-serif;
-        }
-        .bouncing {
-            animation: bounce 1s infinite alternate;
-        }
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
-        }
-        .pulse-btn {
-            animation: pulseScale 1.5s infinite;
-        }
-        @keyframes pulseScale {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .card-3d {
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 0px rgba(0,0,0,0.15);
-        }
-        .card-3d:active {
-            transform: translateY(4px);
-            box-shadow: 0 6px 0px rgba(0,0,0,0.15);
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 overflow-x-hidden">
-
-    <!-- Top Header Bar -->
-    <header class="w-full max-w-4xl flex items-center justify-between bg-white/80 backdrop-blur-md p-4 rounded-3xl shadow-lg mb-4 border-4 border-yellow-300">
-        <div class="flex items-center space-x-3">
-            <button onclick="router('home')" class="bg-yellow-400 hover:bg-yellow-500 text-white font-kids px-4 py-2 rounded-2xl shadow-md border-b-4 border-yellow-600 transition flex items-center gap-2 text-lg">
-                🏠 Home
-            </button>
-            <div id="character-avatar" class="text-4xl bouncing cursor-pointer" onclick="teacherTalk('Hello little hero! Ready to play and learn?')">🦊</div>
-        </div>
-        <div class="flex items-center space-x-4">
-            <div class="flex items-center bg-yellow-100 px-4 py-2 rounded-2xl border-2 border-yellow-300 shadow-inner">
-                <span class="text-2xl mr-2">⭐</span>
-                <span id="star-count" class="font-kids text-xl text-yellow-600">0</span>
-            </div>
-            <div class="flex items-center bg-amber-100 px-4 py-2 rounded-2xl border-2 border-amber-300 shadow-inner">
-                <span class="text-2xl mr-2">🪙</span>
-                <span id="coin-count" class="font-kids text-xl text-amber-600">0</span>
-            </div>
-            <button onclick="toggleAudio()" id="audio-toggle-btn" class="bg-pink-400 hover:bg-pink-500 text-white font-kids p-3 rounded-2xl shadow-md border-b-4 border-pink-600 transition text-xl">
-                🔊
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Container Card -->
-    <main id="app-container" class="w-full max-w-4xl bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl p-6 border-8 border-indigo-200 flex flex-col items-center justify-center min-h-[550px] relative overflow-hidden">
-        <!-- Dynamic Content Injected Here via JavaScript -->
-    </main>
-
-    <!-- Footer Teacher Guide Bar -->
-    <footer class="w-full max-w-4xl mt-4 bg-indigo-900/80 backdrop-blur-md text-white p-4 rounded-3xl shadow-lg flex items-center justify-between border-4 border-indigo-400">
-        <div class="flex items-center space-x-3">
-            <span class="text-3xl">🦉</span>
-            <div>
-                <h4 class="font-kids text-yellow-300 text-sm">Teacher Wise-Owl Says:</h4>
-                <p id="teacher-speech" class="text-xs md:text-sm font-semibold">"Tap buttons to start your magical learning adventure!"</p>
-            </div>
-        </div>
-        <button onclick="syncToCloud()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-kids text-xs px-3 py-2 rounded-xl shadow border-b-2 border-emerald-700">
-            ☁️ Save Progress
-        </button>
-    </footer>
-
-    <!-- Audio Speech & Sound Logic + App State -->
-    <script>
-        // App State
-        let state = {
-            stars: 12,
-            coins: 50,
-            vocabularyLearned: 15,
-            gamesCompleted: 8,
-            soundEnabled: true,
-            currentView: 'home',
-            activeCategory: 'VEGETABLES',
-            currentIndex: 0,
-            unlockedWorlds: ['Farm World']
-        };
-
-        // Complete Vocabulary Database across all required categories
-        const vocabDatabase = {
-            VEGETABLES: [
-                { word: "Carrot", emoji: "🥕", sentence: "Tommy the rabbit loves crunchy orange carrots!" },
-                { word: "Broccoli", emoji: "🥦", sentence: "Green broccoli looks like tiny trees." },
-                { word: "Spinach", emoji: "🥬", sentence: "Spinach gives Popeye big strong arms!" },
-                { word: "Cabbage", emoji: "🥬", sentence: "Cabbage has lots of lovely green layers." },
-                { word: "Tomato", emoji: "🍅", sentence: "A red tomato makes delicious soup." },
-                { word: "Potato", emoji: "🥔", sentence: "We love eating golden mashed potatoes." },
-                { word: "Corn", emoji: "🌽", sentence: "Sweet yellow corn grows tall on the farm." },
-                { word: "Pumpkin", emoji: "🎃", sentence: "A big orange pumpkin becomes a coach!" }
+        // --- GAME DATA DATABASE ---
+        const vocabData = {
+            "Vegetables": [
+                { name: "Carrot", emoji: "🥕", clues: ["I am orange.", "I grow under the soil.", "Rabbits like me."], sentence: "I eat a carrot." },
+                { name: "Broccoli", emoji: "🥦", clues: ["I look like a little tree.", "I am green.", "I am healthy."], sentence: "Broccoli is good for me." },
+                { name: "Spinach", emoji: "🥬", clues: ["I have green leaves.", "I make you strong.", "I am a vegetable."], sentence: "Spinach makes me strong." },
+                { name: "Cabbage", emoji: "🥗", clues: ["I have many leaves.", "My leaves are wrapped together.", "I am usually green."], sentence: "The cabbage is round." },
+                { name: "Lettuce", emoji: "🍃", clues: ["I have soft green leaves.", "I am used in salads.", "I am fresh and crunchy."], sentence: "Lettuce is crunchy." },
+                { name: "Cauliflower", emoji: "☁️", clues: ["I look like a white cloud.", "I look like broccoli.", "I am a vegetable."], sentence: "Cauliflower is white." },
+                { name: "Cucumber", emoji: "🥒", clues: ["I am long and green.", "I am crunchy.", "I taste fresh."], sentence: "I like fresh cucumber." },
+                { name: "Tomato", emoji: "🍅", clues: ["I am red and round.", "I can be used in cooking.", "I am juicy."], sentence: "The tomato is red." },
+                { name: "Potato", emoji: "🥔", clues: ["I am brown outside.", "I grow underground.", "French fries are made from me."], sentence: "French fries are made of potato." },
+                { name: "Sweet Potato", emoji: "🍠", clues: ["I grow underground.", "I taste sweet.", "I can be orange inside."], sentence: "Sweet potato tastes yummy." },
+                { name: "Onion", emoji: "🧅", clues: ["I am round.", "I can make you cry.", "I am used in cooking."], sentence: "The onion is in the soup." }
             ],
-            FRUITS: [
-                { word: "Apple", emoji: "🍎", sentence: "I eat a sweet red apple every day." },
-                { word: "Banana", emoji: "🍌", sentence: "Monkeys love peeling yellow bananas." },
-                { word: "Orange", emoji: "🍊", sentence: "Juicy oranges are packed with vitamin C." },
-                { word: "Mango", emoji: "🥭", sentence: "Ripe yellow mangoes taste super sweet." },
-                { word: "Strawberry", emoji: "🍓", sentence: "Sweet strawberries wear little green hats." },
-                { word: "Watermelon", emoji: "🍉", sentence: "Big watermelons are refreshing in summer." },
-                { word: "Pineapple", emoji: "🍍", sentence: "Spiky pineapples wear royal golden crowns." },
-                { word: "Grapes", emoji: "🍇", sentence: "Purple grapes grow together in sweet bunches." }
+            "Fruits": [
+                { name: "Apple", emoji: "🍎", clues: ["I can be red or green.", "I am crunchy.", "I am sweet."], sentence: "I eat a red apple." },
+                { name: "Banana", emoji: "🍌", clues: ["I am yellow.", "I am long.", "Monkeys like me."], sentence: "Monkeys love bananas." },
+                { name: "Orange", emoji: "🍊", clues: ["I am round.", "I am orange.", "I have vitamin C."], sentence: "Oranges are sweet and juicy." },
+                { name: "Mango", emoji: "🥭", clues: ["I am yellow.", "I taste sweet.", "I have a big seed."], sentence: "The mango is very sweet." },
+                { name: "Strawberry", emoji: "🍓", clues: ["I am small.", "I am red.", "I have tiny seeds outside."], sentence: "Strawberries are delicious." },
+                { name: "Grapes", emoji: "🍇", clues: ["I grow in bunches.", "I can be green or purple.", "I am small and juicy."], sentence: "I like eating grapes." },
+                { name: "Watermelon", emoji: "🍉", clues: ["I am big and round.", "I am green outside.", "I am red inside."], sentence: "Watermelon is cool in summer." },
+                { name: "Pineapple", emoji: "🍍", clues: ["I have rough skin.", "I have a green crown.", "I taste sweet."], sentence: "Pineapples are tropical fruit." },
+                { name: "Pear", emoji: "🍐", clues: ["I am green or yellow.", "I have a unique shape.", "I am juicy."], sentence: "The pear is juicy." },
+                { name: "Peach", emoji: "🍑", clues: ["I am soft.", "I have fuzzy skin.", "I have a seed inside."], sentence: "The peach is soft." },
+                { name: "Kiwi", emoji: "🥝", clues: ["I am brown outside.", "I am green inside.", "I have tiny black seeds."], sentence: "Kiwi has little seeds." }
             ],
-            OCCUPATIONS: [
-                { word: "Doctor", emoji: "🩺", sentence: "The friendly doctor helps us stay healthy." },
-                { word: "Teacher", emoji: "📚", sentence: "Our teacher helps us read wonderful stories." },
-                { word: "Police Officer", emoji: "👮", sentence: "A police officer keeps our neighborhood safe." },
-                { word: "Firefighter", emoji: "🚒", sentence: "Brave firefighters put out blazing fires." },
-                { word: "Chef", emoji: "👨‍🍳", sentence: "The happy chef cooks yummy meals." },
-                { word: "Farmer", emoji: "🌾", sentence: "Farmers grow delicious food for everyone." },
-                { word: "Pilot", emoji: "✈️", sentence: "The pilot flies giant airplanes in the sky." },
-                { word: "Dentist", emoji: "🦷", sentence: "The dentist checks our shiny white teeth." }
+            "Animals": [
+                { name: "Dog", emoji: "🐶", clues: ["I bark loudly.", "I am man's best friend.", "I wag my tail."], sentence: "The dog says woof woof." },
+                { name: "Cat", emoji: "🐱", clues: ["I purr softly.", "I catch mice.", "I say meow."], sentence: "The cat likes fish." },
+                { name: "Lion", emoji: "🦁", clues: ["I am the king of the jungle.", "I have a big mane.", "I roar loudly."], sentence: "The lion roars." },
+                { name: "Elephant", emoji: "🐘", clues: ["I am very big.", "I have a long trunk.", "I have big ears."], sentence: "The elephant has a trunk." },
+                { name: "Monkey", emoji: "🐵", clues: ["I love bananas.", "I climb trees.", "I swing from branch to branch."], sentence: "The monkey swings." }
             ],
-            VEHICLES: [
-                { word: "Car", emoji: "🚗", sentence: "Red cars vroom quickly down the road." },
-                { word: "Bus", emoji: "🚌", sentence: "The big yellow bus takes kids to school." },
-                { word: "Bicycle", emoji: "🚲", sentence: "We pedal our bicycles around the park." },
-                { word: "Train", emoji: "🚂", sentence: "Choo-choo goes the fast steam train." },
-                { word: "Airplane", emoji: "✈️", sentence: "Airplanes soar high above fluffy clouds." },
-                { word: "Boat", emoji: "⛵", sentence: "Sailing boats float gently on blue water." },
-                { word: "Ambulance", emoji: "🚑", sentence: "The ambulance speeds by with flashing lights." },
-                { word: "Rocket", emoji: "🚀", sentence: "Rockets blast off zooming into outer space." }
+            "Vehicles": [
+                { name: "Car", emoji: "🚗", clues: ["I have four wheels.", "I drive on roads.", "Beep beep!"], sentence: "The car is red." },
+                { name: "Bus", emoji: "🚌", clues: ["I am big and long.", "I carry many people.", "Children ride me to school."], sentence: "The school bus stops." },
+                { name: "Airplane", emoji: "✈️", clues: ["I fly in the sky.", "I have big wings.", "I carry passengers far away."], sentence: "The airplane flies high." }
             ],
-            SHAPES: [
-                { word: "Circle", emoji: "⭕", sentence: "A round circle looks just like a shiny coin." },
-                { word: "Square", emoji: "⬛", sentence: "A square has four equal straight sides." },
-                { word: "Triangle", emoji: "🔺", sentence: "A triangle has three sharp corners." },
-                { word: "Rectangle", emoji: "🟫", sentence: "Doors and windows are shaped like rectangles." },
-                { word: "Star", emoji: "⭐", sentence: "Twinkle twinkle little golden star!" },
-                { word: "Heart", emoji: "❤️", sentence: "A heart shape stands for love and hugs." },
-                { word: "Diamond", emoji: "💠", sentence: "Sparkling diamonds shine bright in the light." },
-                { word: "Cube", emoji: "🧊", sentence: "Ice cubes in cold juice are shaped like cubes." }
+            "Occupations": [
+                { name: "Doctor", emoji: "👩‍⚕️", clues: ["I help people feel better.", "I wear a white coat.", "I work in a hospital."], sentence: "The doctor helps sick people." },
+                { name: "Teacher", emoji: "👩‍🏫", clues: ["I teach children.", "I write on the chalkboard.", "I work in a school."], sentence: "My teacher is kind." },
+                { name: "Firefighter", emoji: "👨‍🚒", clues: ["I put out fires.", "I wear a red helmet.", "I drive a big red truck."], sentence: "The firefighter is brave." }
             ],
-            COLORS: [
-                { word: "Red", emoji: "🔴", sentence: "Strawberries and fire engines are red." },
-                { word: "Blue", emoji: "🔵", sentence: "The vast ocean and open sky are blue." },
-                { word: "Yellow", emoji: "🟡", sentence: "The warm glowing sun is bright yellow." },
-                { word: "Green", emoji: "🟢", sentence: "Juicy grass and spring leaves are green." },
-                { word: "Orange", emoji: "🟠", sentence: "Tigers and sweet oranges share orange color." },
-                { word: "Purple", emoji: "🟣", sentence: "Sweet eggplants and plums are purple." },
-                { word: "Pink", emoji: "🩷", sentence: "Pretty flowers and cute bows can be pink." },
-                { word: "Brown", emoji: "🟤", sentence: "Friendly bears and chocolate are brown." }
+            "Shapes": [
+                { name: "Circle", emoji: "🔴", clues: ["I am round like a ball.", "I have no straight lines.", "I look like the sun."], sentence: "A ball is a circle." },
+                { name: "Square", emoji: "🟦", clues: ["I have four equal sides.", "I have four corners.", "I look like a box."], sentence: "The window is a square." },
+                { name: "Triangle", emoji: "🔺", clues: ["I have three sides.", "I have three corners.", "I look like a slice of pizza."], sentence: "A slice of pizza is a triangle." }
             ],
-            ANIMALS: [
-                { word: "Cat", emoji: "🐱", sentence: "The fluffy cat purrs softly when stroked." },
-                { word: "Dog", emoji: "🐶", sentence: "Happy dogs wag their tails and bark." },
-                { word: "Rabbit", emoji: "🐰", sentence: "Bouncy rabbits love nibbling green lettuce." },
-                { word: "Elephant", emoji: "🐘", sentence: "Big elephants have long grey trunks." },
-                { word: "Lion", emoji: "🦁", sentence: "The brave lion is the king of the jungle." },
-                { word: "Monkey", emoji: "🐵", sentence: "Playful monkeys swing high up in trees." },
-                { word: "Penguin", emoji: "🐧", sentence: "Waddling penguins love swimming in icy water." },
-                { word: "Dolphin", emoji: "🐬", sentence: "Friendly dolphins leap gracefully through waves." }
+            "Colors": [
+                { name: "Red", emoji: "❤️", clues: ["I am the color of strawberries.", "I am the color of stop signs.", "I am bright and warm."], sentence: "Apples are red." },
+                { name: "Blue", emoji: "💙", clues: ["I am the color of the sky.", "I am the color of the ocean.", "I am cool and calm."], sentence: "The sky is blue." },
+                { name: "Yellow", emoji: "💛", clues: ["I am the color of the sun.", "I am the color of bananas.", "I am bright and happy."], sentence: "The sun is yellow." }
             ],
-            BODYPARTS: [
-                { word: "Head", emoji: "🗣️", sentence: "We wear our colorful hats on our head." },
-                { word: "Eye", emoji: "👁️", sentence: "We use our eyes to see beautiful colors." },
-                { word: "Ear", emoji: "👂", sentence: "We use our ears to listen to music." },
-                { word: "Nose", emoji: "👃", sentence: "We smell sweet flowers with our nose." },
-                { word: "Mouth", emoji: "👄", sentence: "We use our mouth to smile and speak." },
-                { word: "Hand", emoji: "✋", sentence: "We wave goodbye with our happy hands." },
-                { word: "Foot", emoji: "🦶", sentence: "We stomp our feet when dancing around." },
-                { word: "Heart", emoji: "💓", sentence: "Our heart beats steadily inside our chest." }
+            "Things Around Me": [
+                { name: "Book", emoji: "📖", clues: ["I have many pages.", "You read stories inside me.", "I have a front and back cover."], sentence: "I read a fun book." },
+                { name: "Clock", emoji: "⏰", clues: ["I have numbers from 1 to 12.", "I have moving hands.", "I tell you the time."], sentence: "The clock ticks." },
+                { name: "Bed", emoji: "🛏️", clues: ["You sleep on me at night.", "I have a pillow and blanket.", "I am soft and cozy."], sentence: "I sleep in my bed." }
             ],
-            DAILYOBJECTS: [
-                { word: "Chair", emoji: "🪑", sentence: "We sit down comfortably on a chair." },
-                { word: "Table", emoji: "🪵", sentence: "We eat our yummy snacks on the table." },
-                { word: "Bed", emoji: "🛏️", sentence: "We sleep soundly in our cozy warm bed." },
-                { word: "Clock", emoji: "⏰", sentence: "The ticking clock tells us what time it is." },
-                { word: "Book", emoji: "📖", sentence: "We love reading colorful story books." },
-                { word: "Pencil", emoji: "✏️", sentence: "We draw wonderful pictures with a pencil." },
-                { word: "Cup", emoji: "🥤", sentence: "We drink refreshing water from a cup." },
-                { word: "Toothbrush", emoji: "🪥", sentence: "We brush our teeth sparkling clean every day." }
+            "Clothes": [
+                { name: "Shirt", emoji: "👕", clues: ["You wear me on your upper body.", "I have sleeves.", "I keep you warm."], sentence: "I wear a blue shirt." },
+                { name: "Pants", emoji: "👖", clues: ["You wear me on your legs.", "I have two holes for your feet.", "I keep you covered."], sentence: "My pants have pockets." },
+                { name: "Hat", emoji: "🧢", clues: ["You wear me on your head.", "I protect you from the sun.", "I look stylish."], sentence: "I wear a hat outside." }
             ],
-            PLACES: [
-                { word: "School", emoji: "🏫", sentence: "We learn new exciting things at school." },
-                { word: "Hospital", emoji: "🏥", sentence: "Doctors and nurses help patients at the hospital." },
-                { word: "Park", emoji: "🌳", sentence: "We play on swings and slides at the park." },
-                { word: "Zoo", emoji: "🦁", sentence: "We visit wild exotic animals at the zoo." },
-                { word: "Supermarket", emoji: "🛒", sentence: "We buy fresh groceries at the supermarket." },
-                { word: "Library", emoji: "📚", sentence: "Quiet libraries are full of thousands of books." },
-                { word: "Beach", emoji: "🏖️", sentence: "We build sandcastles by the ocean beach." },
-                { word: "Airport", emoji: "🛫", sentence: "Airplanes take off and land at the airport." }
+            "Body Parts": [
+                { name: "Eyes", emoji: "👀", clues: ["You have two of me.", "You use me to see things.", "You can blink with me."], sentence: "I see with my eyes." },
+                { name: "Nose", emoji: "👃", clues: ["I am in the middle of your face.", "You use me to smell flowers.", "You can sneeze with me."], sentence: "I smell with my nose." },
+                { name: "Hand", emoji: "✋", clues: ["I have five fingers.", "You use me to hold things.", "You can wave hello with me."], sentence: "I wave with my hand." }
             ]
         };
 
-        // Text-to-Speech Helper
-        function speak(text) {
-            if (!state.soundEnabled) return;
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.85; // Slower for kids
-                utterance.pitch = 1.2;  // Friendly higher pitch
-                window.speechSynthesis.speak(utterance);
+        // --- APPLICATION STATE ---
+        let gameState = {
+            stars: 0,
+            wordsLearned: 0,
+            correctAnswers: 0,
+            timePlayed: 0, // in seconds
+            soundEnabled: true,
+            currentCategory: null,
+            gameQueue: [],
+            currentQuestionIndex: 0,
+            currentClueIndex: 0,
+            scoreThisSession: 0
+        };
+
+        // Timer interval
+        setInterval(() => {
+            gameState.timePlayed++;
+        }, 1000);
+
+        // Load stats from localStorage if available
+        function loadStats() {
+            const saved = localStorage.getItem('myFirstWordsState');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    gameState.stars = parsed.stars || 0;
+                    gameState.wordsLearned = parsed.wordsLearned || 0;
+                    gameState.correctAnswers = parsed.correctAnswers || 0;
+                    gameState.timePlayed = parsed.timePlayed || 0;
+                } catch(e) {}
+            }
+            updateStarDisplay();
+        }
+
+        function saveStats() {
+            localStorage.setItem('myFirstWordsState', JSON.stringify({
+                stars: gameState.stars,
+                wordsLearned: gameState.wordsLearned,
+                correctAnswers: gameState.correctAnswers,
+                timePlayed: gameState.timePlayed
+            }));
+
+            // Sync to Firebase if connected
+            if (db) {
+                db.ref('stats/user_global').set({
+                    stars: gameState.stars,
+                    wordsLearned: gameState.wordsLearned,
+                    correctAnswers: gameState.correctAnswers,
+                    lastUpdated: Date.now()
+                }).catch(() => {});
             }
         }
 
-        function teacherTalk(message) {
-            document.getElementById('teacher-speech').innerText = `"${message}"`;
-            speak(message);
+        function updateStarDisplay() {
+            document.getElementById('star-count').innerText = gameState.stars;
         }
 
-        function toggleAudio() {
-            state.soundEnabled = !state.soundEnabled;
-            const btn = document.getElementById('audio-toggle-btn');
-            btn.innerText = state.soundEnabled ? '🔊' : '🔇';
-            btn.classList.toggle('bg-pink-400', state.soundEnabled);
-            btn.classList.toggle('bg-gray-400', !state.soundEnabled);
+        // --- AUDIO SYNTHESIS & SOUND FX ---
+        function playSoundEffect(type) {
+            if (!gameState.soundEnabled) return;
+            const synth = window.speechSynthesis;
+            if (!synth) return;
+            
+            if (type === 'correct') {
+                const utter = new SpeechSynthesisUtterance("Yay! Great job!");
+                utter.rate = 1.2;
+                synth.speak(utter);
+            } else if (type === 'incorrect') {
+                const utter = new SpeechSynthesisUtterance("Try again!");
+                utter.rate = 1.0;
+                synth.speak(utter);
+            }
         }
 
-        function updateStatsDisplay() {
-            document.getElementById('star-count').innerText = state.stars;
-            document.getElementById('coin-count').innerText = state.coins;
+        function speakText(text) {
+            if (!gameState.soundEnabled) return;
+            const synth = window.speechSynthesis;
+            if (!synth) return;
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.9;
+            utter.pitch = 1.2; // Kid friendly pitch
+            synth.speak(utter);
         }
 
-        // Router / Navigation Manager
-        function router(view, param = null) {
-            state.currentView = view;
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const btn = document.getElementById('sound-btn');
+            btn.innerText = gameState.soundEnabled ? "🔊" : "🔇";
+            speakText(gameState.soundEnabled ? "Sound on" : "Sound off");
+        }
+
+        // --- VIEW ROUTER ---
+        function renderHomeScreen() {
             const container = document.getElementById('app-container');
-            container.innerHTML = '';
-
-            if (view === 'home') {
-                renderHome(container);
-            } else if (view === 'learn-menu') {
-                renderLearnMenu(container);
-            } else if (view === 'vocab-session') {
-                state.activeCategory = param || 'VEGETABLES';
-                state.currentIndex = 0;
-                renderVocabSession(container);
-            } else if (view === 'story-adventure') {
-                renderStoryAdventure(container);
-            } else if (view === 'games-menu') {
-                renderGamesMenu(container);
-            } else if (view === 'game-play') {
-                renderGamePlay(container, param);
-            } else if (view === 'exam') {
-                renderExam(container);
-            } else if (view === 'progress') {
-                renderProgress(container);
-            } else if (view === 'rewards') {
-                renderRewards(container);
-            }
-            updateStatsDisplay();
-        }
-
-        // 1. HOME MENU
-        function renderHome(container) {
-            teacherTalk("Welcome back! What shall we explore today?");
             container.innerHTML = `
-                <div class="text-center mb-6">
-                    <h1 class="font-kids text-4xl md:text-5xl text-indigo-600 drop-shadow-md mb-2">🌟 Vocab Adventure 🚀</h1>
-                    <p class="text-gray-600 font-semibold text-sm md:text-base">Play, Learn & Grow in English!</p>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-2xl px-2">
-                    <button onclick="router('learn-menu')" class="card-3d bg-gradient-to-br from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-kids p-4 rounded-3xl shadow-lg border-b-8 border-orange-700 flex flex-col items-center justify-center space-y-2 text-xl">
-                        <span class="text-4xl">📚</span> Learn Vocab
-                    </button>
-                    <button onclick="router('story-adventure')" class="card-3d bg-gradient-to-br from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-kids p-4 rounded-3xl shadow-lg border-b-8 border-teal-700 flex flex-col items-center justify-center space-y-2 text-xl">
-                        <span class="text-4xl">📖</span> Story World
-                    </button>
-                    <button onclick="router('games-menu')" class="card-3d bg-gradient-to-br from-sky-400 to-blue-600 hover:from-sky-500 hover:to-blue-700 text-white font-kids p-4 rounded-3xl shadow-lg border-b-8 border-blue-800 flex flex-col items-center justify-center space-y-2 text-xl">
-                        <span class="text-4xl">🎮</span> Play Games
-                    </button>
-                    <button onclick="router('exam')" class="card-3d bg-gradient-to-br from-purple-400 to-indigo-600 hover:from-purple-500 hover:to-indigo-700 text-white font-kids p-4 rounded-3xl shadow-lg border-b-8 border-indigo-800 flex flex-col items-center justify-center space-y-2 text-xl">
-                        <span class="text-4xl">🏆</span> Challenge Exam
-                    </button>
-                    <button onclick="router('progress')" class="card-3d bg-gradient-to-br from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-kids p-4 rounded-3xl shadow-lg border-b-8 border-rose-700 flex flex-col items-center justify-center space-y-2 text-xl">
-                        <span class="text-4xl">📊</span> My Progress
-                    </button>
-                    <button onclick="router('rewards')" class="card-3d bg-gradient-to-br from-yellow-300 to-amber-500 hover:from-yellow-400 hover:to-amber-600 text-white font-kids p-4 rounded-3xl shadow-lg border-b-8 border-amber-700 flex flex-col items-center justify-center space-y-2 text-xl">
-                        <span class="text-4xl">🎁</span> Rewards Shop
-                    </button>
-                </div>
-            `;
-        }
-
-        // 2. LEARN VOCABULARY CATEGORIES MENU
-        function renderLearnMenu(container) {
-            teacherTalk("Choose a category to discover amazing words!");
-            const categories = Object.keys(vocabDatabase);
-            let gridHTML = categories.map(cat => `
-                <button onclick="router('vocab-session', '${cat}')" class="card-3d bg-white hover:bg-indigo-50 border-4 border-indigo-200 p-4 rounded-3xl shadow-md flex flex-col items-center justify-center space-y-1 transition">
-                    <span class="text-3xl">${getCategoryIcon(cat)}</span>
-                    <span class="font-kids text-indigo-700 text-base capitalize">${cat.toLowerCase()}</span>
-                </button>
-            `).join('');
-
-            container.innerHTML = `
-                <div class="flex items-center justify-between w-full mb-4">
-                    <button onclick="router('home')" class="bg-gray-200 hover:bg-gray-300 font-kids px-4 py-2 rounded-2xl text-gray-700">⬅️ Back</button>
-                    <h2 class="font-kids text-2xl text-indigo-700">Choose Vocabulary Topic</h2>
-                    <div></div>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-h-[400px] overflow-y-auto p-2">
-                    ${gridHTML}
-                </div>
-            `;
-        }
-
-        function getCategoryIcon(cat) {
-            const icons = {
-                VEGETABLES: '🥕', FRUITS: '🍎', OCCUPATIONS: '🩺', VEHICLES: '🚗',
-                SHAPES: '⭐', COLORS: '🎨', ANIMALS: '🐶', BODYPARTS: '👁️',
-                DAILYOBJECTS: '📚', PLACES: '🏫'
-            };
-            return icons[cat] || '🌟';
-        }
-
-        // 3. VOCABULARY LEARNING SESSION (Step-by-step)
-        function renderVocabSession(container) {
-            const list = vocabDatabase[state.activeCategory];
-            if (state.currentIndex >= list.length) {
-                state.stars += 5;
-                state.coins += 20;
-                state.vocabularyLearned += list.length;
-                state.gamesCompleted += 1;
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                
-                container.innerHTML = `
-                    <div class="text-center space-y-4">
-                        <div class="text-6xl bouncing">🎉</div>
-                        <h2 class="font-kids text-3xl text-indigo-700">Awesome Job!</h2>
-                        <p class="font-semibold text-gray-600">You completed the ${state.activeCategory} adventure!</p>
-                        <div class="flex justify-center space-x-4 text-xl font-kids text-amber-600 bg-yellow-100 p-3 rounded-2xl">
-                            <span>+5 ⭐</span>
-                            <span>+20 🪙</span>
-                        </div>
-                        <button onclick="router('learn-menu')" class="card-3d bg-emerald-500 text-white font-kids px-6 py-3 rounded-2xl shadow-lg border-b-4 border-emerald-700 text-xl">Continue Learning 🚀</button>
+                <div class="flex flex-col items-center text-center animate-pulse-scale">
+                    <div class="text-7xl sm:text-8xl mb-2 animate-bounce-slow">🐱‍👤</div>
+                    <h1 class="font-fun text-4xl sm:text-6xl text-rose-500 drop-shadow-md mb-1">Who Am I?</h1>
+                    <p class="font-fun text-lg sm:text-2xl text-purple-600 mb-6 drop-shadow-sm">Read the clues. Guess the picture!</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md px-4">
+                        <button onclick="router('categories', 'game')" class="btn-3d bg-emerald-400 hover:bg-emerald-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-emerald-200">
+                            <span>▶</span> Start Game
+                        </button>
+                        <button onclick="router('categories', 'learn')" class="btn-3d bg-amber-400 hover:bg-amber-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-amber-200">
+                            <span>📚</span> Learn Words
+                        </button>
+                        <button onclick="renderRewards()" class="btn-3d bg-sky-400 hover:bg-sky-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-sky-200 col-span-1 sm:col-span-2">
+                            <span>🏆</span> My Rewards
+                        </button>
                     </div>
+                </div>
+            `;
+            speakText("Welcome to Who Am I! Choose a game or learn words!");
+        }
+
+        let currentAppMode = 'game'; // 'game' or 'learn'
+
+        function router(view, mode = 'game') {
+            currentAppMode = mode;
+            if (view === 'home') {
+                renderHomeScreen();
+            } else if (view === 'categories') {
+                renderCategorySelection();
+            }
+        }
+
+        // --- CATEGORY SELECTION VIEW ---
+        function renderCategorySelection() {
+            const categories = Object.keys(vocabData);
+            const container = document.getElementById('app-container');
+            
+            let gridHtml = '';
+            categories.forEach(cat => {
+                let sampleEmoji = vocabData[cat][0].emoji;
+                gridHtml += `
+                    <button onclick="selectCategory('${cat}')" class="btn-3d bg-white hover:bg-purple-50 p-4 rounded-3xl flex flex-col items-center justify-center border-4 border-purple-200 shadow-lg transition-transform active:scale-95 group">
+                        <span class="text-4xl sm:text-5xl mb-2 group-hover:scale-110 transition-transform">${sampleEmoji}</span>
+                        <span class="font-fun text-base sm:text-lg text-purple-700">${cat}</span>
+                    </button>
                 `;
+            });
+
+            container.innerHTML = `
+                <div class="w-full flex flex-col items-center">
+                    <div class="w-full flex justify-between items-center mb-4 px-2">
+                        <button onclick="router('home')" class="bg-white/80 hover:bg-white px-4 py-2 rounded-2xl font-fun text-purple-600 shadow-md border-2 border-purple-300">
+                            ⬅ Back
+                        </button>
+                        <h2 class="font-fun text-2xl sm:text-3xl text-purple-700 drop-shadow-sm">
+                            ${currentAppMode === 'game' ? '🎮 Choose a Game Category' : '📚 Choose Learning Topic'}
+                        </h2>
+                        <div class="w-16"></div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 w-full max-h-[70vh] overflow-y-auto p-2">
+                        ${gridHtml}
+                    </div>
+                </div>
+            `;
+            speakText("Pick a category!");
+        }
+
+        function selectCategory(categoryName) {
+            gameState.currentCategory = categoryName;
+            if (currentAppMode === 'game') {
+                startQuizGame(categoryName);
+            } else {
+                startLearnMode(categoryName);
+            }
+        }
+
+        // --- GAME MODE: WHO AM I? ---
+        function startQuizGame(categoryName) {
+            const items = [...vocabData[categoryName]];
+            // Shuffle items for randomization
+            gameState.gameQueue = items.sort(() => 0.5 - Math.random());
+            gameState.currentQuestionIndex = 0;
+            gameState.currentClueIndex = 0;
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const qList = gameState.gameQueue;
+            if (gameState.currentQuestionIndex >= qList.length) {
+                renderVictoryScreen();
                 return;
             }
 
-            const item = list[state.currentIndex];
-            teacherTalk(`Look at the ${item.word}! Listen and repeat.`);
+            const currentItem = qList[gameState.currentQuestionIndex];
+            const maxClues = currentItem.clues.length;
+            const currentClue = currentItem.clues[gameState.currentClueIndex];
 
+            // Generate 3 choices (1 correct, 2 distractors from same category or pool)
+            let choices = [currentItem];
+            let allPool = Object.values(vocabData).flat().filter(i => i.name !== currentItem.name);
+            allPool = allPool.sort(() => 0.5 - Math.random());
+            choices.push(allPool[0], allPool[1]);
+            choices = choices.sort(() => 0.5 - Math.random());
+
+            const container = document.getElementById('app-container');
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('learn-menu')" class="bg-gray-200 hover:bg-gray-300 font-kids px-3 py-1 rounded-xl text-xs text-gray-700">⬅️ Topics</button>
-                    <span class="font-kids text-indigo-500 text-sm">Item ${state.currentIndex + 1} of ${list.length}</span>
-                </div>
-                <div class="bg-gradient-to-b from-indigo-50 to-pink-50 p-6 rounded-3xl border-4 border-indigo-200 shadow-inner flex flex-col items-center text-center w-full max-w-md">
-                    <div class="text-8xl md:text-9xl mb-4 bouncing cursor-pointer" onclick="speak('${item.word}')">${item.emoji}</div>
-                    <h2 class="font-kids text-4xl text-indigo-700 mb-2">${item.word}</h2>
-                    <p class="font-semibold text-gray-600 text-sm md:text-base mb-6 bg-white px-4 py-2 rounded-2xl shadow-sm border border-indigo-100">"${item.sentence}"</p>
+                <div class="w-full max-w-xl flex flex-col items-center bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-2xl border-4 border-amber-300">
+                    <div class="w-full flex justify-between items-center mb-4">
+                        <button onclick="router('categories', 'game')" class="bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-xl font-fun text-amber-700 text-sm">
+                            ⬅ Categories
+                        </button>
+                        <span class="font-fun text-amber-600">Question ${gameState.currentQuestionIndex + 1} of ${qList.length}</span>
+                    </div>
+
+                    <h2 class="font-fun text-3xl text-purple-700 mb-2">Who Am I?</h2>
                     
-                    <div class="flex space-x-3 w-full">
-                        <button onclick="speak('${item.word}')" class="flex-1 card-3d bg-sky-400 hover:bg-sky-500 text-white font-kids py-3 rounded-2xl shadow-lg border-b-4 border-sky-600 text-lg flex items-center justify-center gap-2">
-                            🔊 Listen
+                    <!-- Mystery Silhouette Box -->
+                    <div class="w-32 h-32 sm:w-40 sm:h-40 bg-purple-100 rounded-3xl flex items-center justify-center border-4 border-dashed border-purple-300 mb-4 shadow-inner">
+                        <span class="text-6xl sm:text-7xl animate-pulse">❓</span>
+                    </div>
+
+                    <!-- Clue Card -->
+                    <div class="w-full bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6 text-center shadow-sm">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 block mb-1">Clue ${gameState.currentClueIndex + 1} of ${maxClues}</span>
+                        <p class="font-fun text-xl sm:text-2xl text-slate-700" id="clue-text">"${currentClue}"</p>
+                        <button onclick="speakText('${currentClue}')" class="mt-2 bg-amber-200 hover:bg-amber-300 px-3 py-1 rounded-full font-fun text-xs text-amber-800">
+                            🔊 Read Clue
                         </button>
-                        <button onclick="nextVocabItem()" class="flex-1 card-3d bg-emerald-500 hover:bg-emerald-600 text-white font-kids py-3 rounded-2xl shadow-lg border-b-4 border-emerald-700 text-lg flex items-center justify-center gap-2">
-                            Next ➡️
-                        </button>
+                    </div>
+
+                    <!-- Answer Choices Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+                        ${choices.map((choice, idx) => `
+                            <button onclick="checkAnswer('${choice.name}', '${currentItem.name}')" class="btn-3d bg-purple-100 hover:bg-purple-200 border-3 border-purple-300 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-transform active:scale-95">
+                                <span class="text-3xl">${choice.emoji}</span>
+                                <span class="font-fun text-purple-800 text-lg">${choice.name}</span>
+                            </button>
+                        `).join('')}
                     </div>
                 </div>
             `;
-            speak(item.word);
+            speakText(`Who am I? ${currentClue}`);
         }
 
-        function nextVocabItem() {
-            state.currentIndex++;
-            renderVocabSession(document.getElementById('app-container'));
+        function checkAnswer(selectedName, correctName) {
+            const currentItem = vocabData[gameState.currentCategory].find(i => i.name === correctName);
+            const maxClues = currentItem.clues.length;
+
+            if (selectedName === correctName) {
+                // Correct Answer!
+                gameState.stars += 1;
+                gameState.correctAnswers += 1;
+                gameState.wordsLearned += 1;
+                saveStats();
+                playSoundEffect('correct');
+
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
+
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-emerald-300 text-center animate-pulse-scale">
+                        <div class="text-7xl mb-2">🎉</div>
+                        <h2 class="font-fun text-4xl text-emerald-600 mb-2">Great Job!</h2>
+                        <p class="font-fun text-2xl text-slate-700 mb-4">Yay! You got it! It's a ${currentItem.name} ${currentItem.emoji}</p>
+                        <div class="bg-emerald-50 border-2 border-emerald-200 px-6 py-3 rounded-2xl mb-6 font-fun text-xl text-emerald-700">
+                            ⭐ +1 Star Earned!
+                        </div>
+                        <button onclick="nextQuestion()" class="btn-3d bg-emerald-500 hover:bg-emerald-600 text-white font-fun text-xl py-3 px-8 rounded-2xl">
+                            Next Question ➡
+                        </button>
+                    </div>
+                `;
+                speakText(`Yay! You got it! It's a ${currentItem.name}`);
+            } else {
+                // Incorrect Answer -> Provide next clue if available, else retry
+                playSoundEffect('incorrect');
+                if (gameState.currentClueIndex < maxClues - 1) {
+                    gameState.currentClueIndex++;
+                    renderQuizQuestion();
+                } else {
+                    // Show small hint message modal/alert inline
+                    const container = document.getElementById('app-container');
+                    // Render incorrect feedback with hint
+                    showIncorrectFeedback(currentItem);
+                }
+            }
         }
 
-        // 4. STORY ADVENTURE WORLD MAP
-        function renderStoryAdventure(container) {
-            teacherTalk("Welcome to Story Adventure! Choose a magical world to explore!");
+        function showIncorrectFeedback(currentItem) {
+            const container = document.getElementById('app-container');
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-4">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-gray-700">⬅️ Home</button>
-                    <h2 class="font-kids text-2xl text-indigo-700">Adventure World Map</h2>
-                    <div></div>
+                <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-rose-300 text-center">
+                    <div class="text-6xl mb-2">💡</div>
+                    <h2 class="font-fun text-3xl text-rose-500 mb-2">Try Again!</h2>
+                    <p class="font-fun text-xl text-slate-700 mb-4">Look at my color and features!</p>
+                    <button onclick="renderQuizQuestion()" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white font-fun text-xl py-3 px-8 rounded-2xl">
+                        Try Again 🔄
+                    </button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl">
-                    <div onclick="startStoryWorld('Farm World')" class="card-3d bg-gradient-to-r from-green-400 to-emerald-500 p-5 rounded-3xl text-white font-kids shadow-lg border-b-8 border-emerald-700 cursor-pointer flex items-center justify-between">
-                        <div>
-                            <h3 class="text-2xl">🌾 Farm World</h3>
-                            <p class="text-xs font-normal opacity-90">Vegetables, Fruits & Animals</p>
-                        </div>
-                        <span class="text-4xl">🚜</span>
-                    </div>
-                    <div onclick="startStoryWorld('City World')" class="card-3d bg-gradient-to-r from-blue-400 to-indigo-500 p-5 rounded-3xl text-white font-kids shadow-lg border-b-8 border-indigo-700 cursor-pointer flex items-center justify-between">
-                        <div>
-                            <h3 class="text-2xl">🏙️ City World</h3>
-                            <p class="text-xs font-normal opacity-90">Occupations & Vehicles</p>
-                        </div>
-                        <span class="text-4xl">🚒</span>
-                    </div>
-                    <div onclick="startStoryWorld('Home World')" class="card-3d bg-gradient-to-r from-pink-400 to-rose-500 p-5 rounded-3xl text-white font-kids shadow-lg border-b-8 border-rose-700 cursor-pointer flex items-center justify-between">
-                        <div>
-                            <h3 class="text-2xl">🏡 Home World</h3>
-                            <p class="text-xs font-normal opacity-90">Body Parts & Daily Objects</p>
-                        </div>
-                        <span class="text-4xl">🧸</span>
-                    </div>
-                    <div onclick="startStoryWorld('Shape World')" class="card-3d bg-gradient-to-r from-yellow-400 to-amber-500 p-5 rounded-3xl text-white font-kids shadow-lg border-b-8 border-amber-700 cursor-pointer flex items-center justify-between">
-                        <div>
-                            <h3 class="text-2xl">⭐ Shape World</h3>
-                            <p class="text-xs font-normal opacity-90">Shapes & Colors</p>
-                        </div>
-                        <span class="text-4xl">🎨</span>
+            `;
+            speakText("Try again! Look at my color.");
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestionIndex++;
+            gameState.currentClueIndex = 0;
+            renderQuizQuestion();
+        }
+
+        function renderVictoryScreen() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-amber-300 text-center">
+                    <div class="text-7xl mb-2">🏆</div>
+                    <h2 class="font-fun text-4xl text-amber-500 mb-2">Fantastic!</h2>
+                    <p class="font-fun text-xl text-slate-700 mb-6">You finished all questions in this category!</p>
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="router('categories', 'game')" class="btn-3d bg-purple-500 hover:bg-purple-600 text-white font-fun text-lg py-3 px-6 rounded-2xl">
+                            More Games 🎮
+                        </button>
+                        <button onclick="router('home')" class="btn-3d bg-sky-400 hover:bg-sky-500 text-white font-fun text-lg py-3 px-6 rounded-2xl">
+                            Home 🏠
+                        </button>
                     </div>
                 </div>
             `;
+            speakText("Fantastic! You finished all questions!");
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+            }
         }
 
-        function startStoryWorld(worldName) {
-            teacherTalk(`Let's read a wonderful story from ${worldName}!`);
-            const stories = {
-                'Farm World': {
-                    title: "Tommy the Rabbit's Carrot Adventure",
-                    text: "Tommy the rabbit lives on a sunny green farm. He loves crunchy orange carrots every day. Carrots help Tommy run fast and stay healthy!",
-                    vocab: "Carrot 🥕"
-                },
-                'City World': {
-                    title: "Dr. Alex and the Busy City",
-                    text: "Dr. Alex works at the big city hospital. A red fire truck speeds down the street with loud sirens. Everyone waves to the brave firefighters!",
-                    vocab: "Doctor 🩺 & Firefighter 🚒"
-                },
-                'Home World': {
-                    title: "My Cozy Morning Room",
-                    text: "I wake up in my cozy warm bed. I sit at my wooden table and read a colorful story book. What a wonderful morning!",
-                    vocab: "Bed 🛏️ & Book 📖"
-                },
-                'Shape World': {
-                    title: "The Magic Drawing Party",
-                    text: "Let's draw a round yellow sun and a square blue house. A red triangle makes the perfect rooftop for our magical house!",
-                    vocab: "Circle ⭕ & Square ⬛"
+        // --- LEARNING MODE (FLASHCARDS) ---
+        function startLearnMode(categoryName) {
+            const items = vocabData[categoryName];
+            let currentIndex = 0;
+
+            function renderCard() {
+                const item = items[currentIndex];
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl border-4 border-amber-300">
+                        <div class="w-full flex justify-between items-center mb-4">
+                            <button onclick="router('categories', 'learn')" class="bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-xl font-fun text-amber-700 text-sm">
+                                ⬅ Categories
+                            </button>
+                            <span class="font-fun text-amber-600">${currentIndex + 1} / ${items.length}</span>
+                        </div>
+
+                        <!-- 3D Picture Flashcard -->
+                        <div class="w-48 h-48 sm:w-56 sm:h-56 bg-amber-50 rounded-3xl flex flex-col items-center justify-center border-4 border-amber-200 mb-4 shadow-md relative">
+                            <span class="text-8xl sm:text-9xl mb-2 animate-bounce-slow">${item.emoji}</span>
+                        </div>
+
+                        <!-- Word & Pronunciation -->
+                        <div class="flex items-center gap-3 mb-3">
+                            <h2 class="font-fun text-3xl sm:text-4xl text-purple-700 uppercase tracking-wide">${item.name}</h2>
+                            <button onclick="speakText('${item.name}')" class="bg-purple-200 hover:bg-purple-300 p-2 rounded-full text-xl shadow">
+                                🔊
+                            </button>
+                        </div>
+
+                        <!-- Simple Sentence -->
+                        <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 w-full text-center mb-6">
+                            <p class="font-fun text-lg sm:text-xl text-slate-700">"${item.sentence}"</p>
+                            <button onclick="speakText('${item.sentence}')" class="mt-2 bg-purple-200 hover:bg-purple-300 px-3 py-1 rounded-full font-fun text-xs text-purple-800">
+                                🔊 Read Sentence
+                            </button>
+                        </div>
+
+                        <!-- Navigation Controls -->
+                        <div class="flex justify-between w-full gap-4">
+                            <button onclick="prevCard()" ${currentIndex === 0 ? 'disabled class="opacity-50 cursor-not-allowed btn-3d bg-slate-300 text-white font-fun px-6 py-3 rounded-2xl flex-1"' : 'class="btn-3d bg-amber-400 hover:bg-amber-500 text-white font-fun px-6 py-3 rounded-2xl flex-1"'}>
+                                ⬅ Prev
+                            </button>
+                            <button onclick="nextCard()" ${currentIndex === items.length - 1 ? 'disabled class="opacity-50 cursor-not-allowed btn-3d bg-slate-300 text-white font-fun px-6 py-3 rounded-2xl flex-1"' : 'class="btn-3d bg-emerald-400 hover:bg-emerald-500 text-white font-fun px-6 py-3 rounded-2xl flex-1"'}>
+                                Next ➡
+                            </button>
+                        </div>
+                    </div>
+                `;
+                speakText(item.name);
+            }
+
+            window.nextCard = function() {
+                if (currentIndex < items.length - 1) {
+                    currentIndex++;
+                    renderCard();
                 }
             };
-            const story = stories[worldName];
+
+            window.prevCard = function() {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderCard();
+                }
+            };
+
+            renderCard();
+        }
+
+        // --- REWARDS SYSTEM ---
+        function renderRewards() {
+            const stars = gameState.stars;
+            let badge = "Beginner Learner";
+            if (stars >= 50) badge = "Word Master 👑";
+            else if (stars >= 30) badge = "Vocabulary Explorer 🚀";
+            else if (stars >= 10) badge = "Super Learner ⭐";
+
             const container = document.getElementById('app-container');
-
             container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('story-adventure')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs text-gray-700">🗺️ Map</button>
-                    <span class="font-kids text-indigo-700 text-lg">${worldName}</span>
-                    <div></div>
-                </div>
-                <div class="bg-amber-50 p-6 rounded-3xl border-4 border-amber-200 shadow-md w-full max-w-lg text-center space-y-4">
-                    <h3 class="font-kids text-2xl text-amber-800">${story.title}</h3>
-                    <p class="text-gray-700 text-base md:text-lg leading-relaxed font-semibold">"${story.text}"</p>
-                    <div class="bg-white p-3 rounded-2xl inline-block shadow-sm border border-amber-200">
-                        <span class="font-kids text-indigo-600 text-sm">Key Vocabulary: ${story.vocab}</span>
-                    </div>
-                    <div>
-                        <button onclick="finishStory('${worldName}')" class="card-3d bg-emerald-500 hover:bg-emerald-600 text-white font-kids px-6 py-3 rounded-2xl shadow-lg border-b-4 border-emerald-700 text-lg">
-                            Complete Story! 🌟
+                <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-sky-300 text-center">
+                    <div class="w-full flex justify-between items-center mb-4">
+                        <button onclick="router('home')" class="bg-sky-100 hover:bg-sky-200 px-3 py-1 rounded-xl font-fun text-sky-700 text-sm">
+                            ⬅ Home
                         </button>
+                        <h2 class="font-fun text-2xl text-sky-700">My Rewards</h2>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <div class="text-7xl mb-3 animate-bounce-slow">🏆</div>
+                    <div class="font-fun text-4xl text-amber-500 mb-1">${stars} Stars</div>
+                    <p class="font-fun text-xl text-purple-600 mb-6">Current Badge: <span class="text-rose-500">${badge}</span></p>
+
+                    <!-- Milestone Checklist -->
+                    <div class="w-full bg-sky-50 border-2 border-sky-200 rounded-2xl p-4 flex flex-col gap-3 text-left">
+                        <div class="flex items-center justify-between font-fun text-slate-700">
+                            <span>⭐ 10 Stars: Super Learner</span>
+                            <span>${stars >= 10 ? '✅' : '🔒'}</span>
+                        </div>
+                        <div class="flex items-center justify-between font-fun text-slate-700">
+                            <span>⭐ 30 Stars: Vocabulary Explorer</span>
+                            <span>${stars >= 30 ? '✅' : '🔒'}</span>
+                        </div>
+                        <div class="flex items-center justify-between font-fun text-slate-700">
+                            <span>⭐ 50 Stars: Word Master</span>
+                            <span>${stars >= 50 ? '✅' : '🔒'}</span>
+                        </div>
                     </div>
                 </div>
             `;
-            speak(story.text);
+            speakText(`You have ${stars} stars! Your badge is ${badge}`);
         }
 
-        function finishStory(worldName) {
-            state.stars += 10;
-            state.coins += 30;
-            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-            teacherTalk(`Wonderful! You earned 10 stars and 30 coins in ${worldName}!`);
-            router('story-adventure');
+        // --- PARENT MODE ---
+        let mathA = 3;
+        let mathB = 4;
+
+        function openParentMode() {
+            mathA = Math.floor(Math.random() * 5) + 1;
+            mathB = Math.floor(Math.random() * 5) + 1;
+            document.getElementById('math-question').innerText = `${mathA} + ${mathB} = ?`;
+            document.getElementById('math-answer').value = '';
+            document.getElementById('pin-modal').classList.remove('hidden');
         }
 
-        // 5. GAMES MENU
-        function renderGamesMenu(container) {
-            teacherTalk("Time for fun mini-games! Pick your favorite challenge!");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-4">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-gray-700">⬅️ Home</button>
-                    <h2 class="font-kids text-2xl text-indigo-700">Fun Learning Games</h2>
-                    <div></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-2xl max-h-[380px] overflow-y-auto p-2">
-                    <button onclick="router('game-play', 'picture-match')" class="card-3d bg-gradient-to-br from-pink-400 to-rose-500 p-4 rounded-3xl text-white font-kids shadow-lg border-b-8 border-rose-700 flex flex-col items-center justify-center space-y-2">
-                        <span class="text-3xl">🍎</span> Picture Match (Easy)
-                    </button>
-                    <button onclick="router('game-play', 'listen-choose')" class="card-3d bg-gradient-to-br from-purple-400 to-indigo-500 p-4 rounded-3xl text-white font-kids shadow-lg border-b-8 border-indigo-700 flex flex-col items-center justify-center space-y-2">
-                        <span class="text-3xl">👂</span> Listen & Choose (Easy)
-                    </button>
-                    <button onclick="router('game-play', 'odd-one-out')" class="card-3d bg-gradient-to-br from-amber-400 to-orange-500 p-4 rounded-3xl text-white font-kids shadow-lg border-b-8 border-orange-700 flex flex-col items-center justify-center space-y-2">
-                        <span class="text-3xl">🔍</span> Odd One Out (Medium)
-                    </button>
-                    <button onclick="router('game-play', 'vocab-detective')" class="card-3d bg-gradient-to-br from-emerald-400 to-teal-500 p-4 rounded-3xl text-white font-kids shadow-lg border-b-8 border-teal-700 flex flex-col items-center justify-center space-y-2">
-                        <span class="text-3xl">🕵️</span> Vocab Detective (Hard)
-                    </button>
-                    <button onclick="router('game-play', 'word-builder')" class="card-3d bg-gradient-to-br from-sky-400 to-blue-600 p-4 rounded-3xl text-white font-kids shadow-lg border-b-8 border-blue-800 flex flex-col items-center justify-center space-y-2">
-                        <span class="text-3xl">🔤</span> Word Builder (Hard)
-                    </button>
-                    <button onclick="router('game-play', 'story-quiz')" class="card-3d bg-gradient-to-br from-yellow-300 to-amber-500 p-4 rounded-3xl text-white font-kids shadow-lg border-b-8 border-amber-700 flex flex-col items-center justify-center space-y-2">
-                        <span class="text-3xl">❓</span> Story Quiz (Hard)
-                    </button>
-                </div>
-            `;
+        function closeParentMode() {
+            document.getElementById('pin-modal').classList.add('hidden');
         }
 
-        // 6. GAME PLAY ENGINE
-        function renderGamePlay(container, gameType) {
-            if (gameType === 'picture-match') {
-                renderPictureMatchGame(container);
-            } else if (gameType === 'listen-choose') {
-                renderListenChooseGame(container);
-            } else if (gameType === 'odd-one-out') {
-                renderOddOneOutGame(container);
-            } else if (gameType === 'vocab-detective') {
-                renderVocabDetectiveGame(container);
-            } else if (gameType === 'word-builder') {
-                renderWordBuilderGame(container);
-            } else if (gameType === 'story-quiz') {
-                renderStoryQuizGame(container);
-            }
-        }
-
-        // Game 1: Picture Match
-        function renderPictureMatchGame(container) {
-            teacherTalk("Match the word APPLE with the correct picture!");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs">⬅️ Games</button>
-                    <span class="font-kids text-indigo-700">Game: Picture Match</span>
-                    <div></div>
-                </div>
-                <div class="text-center space-y-4">
-                    <h2 class="font-kids text-4xl text-indigo-700 bg-pink-100 px-6 py-3 rounded-3xl inline-block border-2 border-pink-300">APPLE</h2>
-                    <p class="text-gray-600 font-semibold text-sm">Tap the matching picture below:</p>
-                    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-3xl text-6xl shadow-md border-4 border-indigo-100 hover:bg-red-50">🍌</button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-6 rounded-3xl text-6xl shadow-md border-4 border-indigo-100 hover:bg-green-50">🍎</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-3xl text-6xl shadow-md border-4 border-indigo-100 hover:bg-red-50">🍊</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Game 2: Listen & Choose
-        function renderListenChooseGame(container) {
-            teacherTalk("Find the cute dog!");
-            speak("Find the dog.");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs">⬅️ Games</button>
-                    <span class="font-kids text-indigo-700">Game: Listen & Choose</span>
-                    <div></div>
-                </div>
-                <div class="text-center space-y-4">
-                    <button onclick="speak('Find the dog.')" class="bg-purple-500 text-white font-kids px-4 py-2 rounded-2xl shadow">🔊 Replay Audio</button>
-                    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-3xl text-6xl shadow-md border-4 border-indigo-100">🐱</button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-6 rounded-3xl text-6xl shadow-md border-4 border-indigo-100">🐶</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-6 rounded-3xl text-6xl shadow-md border-4 border-indigo-100">🐰</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Game 3: Odd One Out
-        function renderOddOneOutGame(container) {
-            teacherTalk("Which item does NOT belong here?");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs">⬅️ Games</button>
-                    <span class="font-kids text-indigo-700">Game: Odd One Out</span>
-                    <div></div>
-                </div>
-                <div class="text-center space-y-4">
-                    <h2 class="font-kids text-xl text-indigo-700">Find the Odd One Out (Fruit vs Vegetable/Other)</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-4 rounded-3xl text-xl font-kids shadow-md border-4 border-indigo-100 flex flex-col items-center">🍎 Apple</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-4 rounded-3xl text-xl font-kids shadow-md border-4 border-indigo-100 flex flex-col items-center">🍌 Banana</button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-4 rounded-3xl text-xl font-kids shadow-md border-4 border-indigo-100 flex flex-col items-center">🥕 Carrot</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-4 rounded-3xl text-xl font-kids shadow-md border-4 border-indigo-100 flex flex-col items-center">🍊 Orange</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Game 4: Vocab Detective
-        function renderVocabDetectiveGame(container) {
-            teacherTalk("Read the clues and guess the secret word!");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs">⬅️ Games</button>
-                    <span class="font-kids text-indigo-700">Game: Vocab Detective</span>
-                    <div></div>
-                </div>
-                <div class="text-center space-y-4 bg-emerald-50 p-6 rounded-3xl border-4 border-emerald-200 max-w-md mx-auto">
-                    <h3 class="font-kids text-2xl text-emerald-800">🕵️ Detective Clues:</h3>
-                    <p class="text-gray-700 font-semibold">• I am yellow.<br>• Monkeys like me.<br>• You can peel and eat me.</p>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow">Apple</button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow">Banana</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow">Carrot</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Game 5: Word Builder
-        function renderWordBuilderGame(container) {
-            teacherTalk("Arrange the letters to spell CAR!");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs">⬅️ Games</button>
-                    <span class="font-kids text-indigo-700">Game: Word Builder</span>
-                    <div></div>
-                </div>
-                <div class="text-center space-y-4">
-                    <div class="text-7xl">🚗</div>
-                    <p class="font-kids text-gray-600">Spell the word: C - A - R</p>
-                    <div class="flex justify-center space-x-3">
-                        <span class="bg-indigo-100 text-indigo-800 font-kids text-2xl px-4 py-2 rounded-xl border-2 border-indigo-300">R</span>
-                        <span class="bg-indigo-100 text-indigo-800 font-kids text-2xl px-4 py-2 rounded-xl border-2 border-indigo-300">A</span>
-                        <span class="bg-indigo-100 text-indigo-800 font-kids text-2xl px-4 py-2 rounded-xl border-2 border-indigo-300">C</span>
-                    </div>
-                    <div>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-indigo-600 text-white font-kids px-6 py-2 rounded-2xl shadow">Tap to Order: C-A-R ✅</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Game 6: Story Quiz
-        function renderStoryQuizGame(container) {
-            teacherTalk("Answer the question based on the story!");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-2">
-                    <button onclick="router('games-menu')" class="bg-gray-200 font-kids px-3 py-1 rounded-xl text-xs">⬅️ Games</button>
-                    <span class="font-kids text-indigo-700">Game: Story Quiz</span>
-                    <div></div>
-                </div>
-                <div class="text-center space-y-4 bg-yellow-50 p-6 rounded-3xl border-4 border-yellow-200 max-w-md mx-auto">
-                    <h3 class="font-kids text-xl text-yellow-800">Story: "Ali visits the zoo and sees a big lion."</h3>
-                    <p class="font-kids text-indigo-700 text-lg">Where did Ali go?</p>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow">School</button>
-                        <button onclick="handleCorrectAnswer()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow">Zoo</button>
-                        <button onclick="handleWrongAnswer()" class="card-3d bg-white p-3 rounded-2xl font-kids shadow">Hospital</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function handleCorrectAnswer() {
-            state.stars += 3;
-            state.coins += 10;
-            state.gamesCompleted += 1;
-            confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
-            teacherTalk("Wonderful! You are amazing!");
-            setTimeout(() => router('games-menu'), 1500);
-        }
-
-        function handleWrongAnswer() {
-            teacherTalk("Almost! Try again carefully.");
-        }
-
-        // 7. MIXED CATEGORY EXAM MODE
-        function renderExam(container) {
-            teacherTalk("Welcome to the Challenge Exam! Let's test your super English skills!");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-4">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-gray-700">⬅️ Home</button>
-                    <h2 class="font-kids text-2xl text-purple-700">🏆 Challenge Exam</h2>
-                    <div></div>
-                </div>
-                <div class="bg-purple-50 p-6 rounded-3xl border-4 border-purple-200 shadow-md w-full max-w-md text-center space-y-4">
-                    <h3 class="font-kids text-xl text-purple-800">Question 1: Which one is a fruit?</h3>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button onclick="handleExamCorrect()" class="card-3d bg-white p-4 rounded-2xl font-kids shadow flex flex-col items-center">🍎<span class="text-xs">Apple</span></button>
-                        <button onclick="handleExamWrong()" class="card-3d bg-white p-4 rounded-2xl font-kids shadow flex flex-col items-center">🚗<span class="text-xs">Car</span></button>
-                        <button onclick="handleExamWrong()" class="card-3d bg-white p-4 rounded-2xl font-kids shadow flex flex-col items-center">🩺<span class="text-xs">Doctor</span></button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function handleExamCorrect() {
-            state.stars += 15;
-            state.coins += 50;
-            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-            teacherTalk("Outstanding! You passed the challenge exam with flying colors!");
-            setTimeout(() => router('home'), 2000);
-        }
-
-        function handleExamWrong() {
-            teacherTalk("Not quite! Let's study more and try again.");
-        }
-
-        // 8. PROGRESS SYSTEM
-        function renderProgress(container) {
-            teacherTalk("Look how much you have learned! You are a superstar!");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-4">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-gray-700">⬅️ Home</button>
-                    <h2 class="font-kids text-2xl text-indigo-700">📊 My Learning Progress</h2>
-                    <div></div>
-                </div>
-                <div class="grid grid-cols-2 gap-4 w-full max-w-lg mb-4">
-                    <div class="bg-yellow-100 border-4 border-yellow-300 p-4 rounded-3xl text-center shadow-sm">
-                        <span class="text-4xl">📚</span>
-                        <h3 class="font-kids text-2xl text-yellow-700 mt-2">${state.vocabularyLearned}</h3>
-                        <p class="text-xs font-semibold text-gray-600">Words Learned</p>
-                    </div>
-                    <div class="bg-sky-100 border-4 border-sky-300 p-4 rounded-3xl text-center shadow-sm">
-                        <span class="text-4xl">🎮</span>
-                        <h3 class="font-kids text-2xl text-sky-700 mt-2">${state.gamesCompleted}</h3>
-                        <p class="text-xs font-semibold text-gray-600">Games Completed</p>
-                    </div>
-                </div>
-                <div class="bg-indigo-50 border-4 border-indigo-200 p-4 rounded-3xl text-center w-full max-w-lg">
-                    <h4 class="font-kids text-indigo-800 text-sm">Parent Summary:</h4>
-                    <p class="text-xs md:text-sm text-gray-700 font-semibold mt-1">"My child learned ${state.vocabularyLearned} words and completed ${state.gamesCompleted} fun activities successfully!"</p>
-                </div>
-            `;
-        }
-
-        // 9. REWARDS SHOP
-        function renderRewards(container) {
-            teacherTalk("Spend your earned coins on awesome badges and stickers!");
-            container.innerHTML = `
-                <div class="w-full flex justify-between items-center mb-4">
-                    <button onclick="router('home')" class="bg-gray-200 font-kids px-4 py-2 rounded-2xl text-gray-700">⬅️ Home</button>
-                    <h2 class="font-kids text-2xl text-amber-700">🎁 Rewards & Stickers</h2>
-                    <div></div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 w-full max-w-md text-center">
-                    <div class="bg-white border-4 border-amber-200 p-4 rounded-3xl shadow-md">
-                        <span class="text-5xl">👑</span>
-                        <p class="font-kids text-sm mt-2">Golden Crown</p>
-                        <button onclick="buyReward(30)" class="mt-2 bg-amber-400 hover:bg-amber-500 text-white font-kids text-xs px-3 py-1 rounded-xl shadow">30 🪙</button>
-                    </div>
-                    <div class="bg-white border-4 border-amber-200 p-4 rounded-3xl shadow-md">
-                        <span class="text-5xl">🦄</span>
-                        <p class="font-kids text-sm mt-2">Magic Unicorn</p>
-                        <button onclick="buyReward(50)" class="mt-2 bg-amber-400 hover:bg-amber-500 text-white font-kids text-xs px-3 py-1 rounded-xl shadow">50 🪙</button>
-                    </div>
-                    <div class="bg-white border-4 border-amber-200 p-4 rounded-3xl shadow-md">
-                        <span class="text-5xl">🚀</span>
-                        <p class="font-kids text-sm mt-2">Space Rocket</p>
-                        <button onclick="buyReward(40)" class="mt-2 bg-amber-400 hover:bg-amber-500 text-white font-kids text-xs px-3 py-1 rounded-xl shadow">40 🪙</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function buyReward(cost) {
-            if (state.coins >= cost) {
-                state.coins -= cost;
-                updateStatsDisplay();
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                teacherTalk("Yay! You unlocked a wonderful new reward!");
+        function verifyPin() {
+            const val = parseInt(document.getElementById('math-answer').value);
+            if (val === mathA + mathB) {
+                closeParentMode();
+                renderParentDashboard();
             } else {
-                teacherTalk("Oops! You need more coins. Play games to earn more!");
+                alert("Incorrect answer! Try again.");
             }
         }
 
-        // Firebase Cloud Sync Integration
-        function syncToCloud() {
-            if (window.db && window.dbSet && window.dbRef) {
-                window.dbSet(window.dbRef(window.db, 'user_progress/child_hero'), {
-                    stars: state.stars,
-                    coins: state.coins,
-                    vocabularyLearned: state.vocabularyLearned,
-                    gamesCompleted: state.gamesCompleted,
-                    lastUpdated: new Date().toISOString()
-                }).then(() => {
-                    teacherTalk("Cloud sync successful! Progress saved safely.");
-                }).catch((error) => {
-                    teacherTalk("Cloud sync failed. Playing offline smoothly!");
-                });
-            } else {
-                teacherTalk("Progress saved locally!");
+        function renderParentDashboard() {
+            const minutesPlayed = Math.floor(gameState.timePlayed / 60);
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-purple-400">
+                    <div class="w-full flex justify-between items-center mb-4">
+                        <button onclick="router('home')" class="bg-purple-100 hover:bg-purple-200 px-3 py-1 rounded-xl font-fun text-purple-700 text-sm">
+                            ⬅ Exit Parent Mode
+                        </button>
+                        <h2 class="font-fun text-2xl text-purple-700">👨‍👩‍👧 Parent Dashboard</h2>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 w-full mb-6">
+                        <div class="bg-purple-50 border-2 border-purple-200 p-4 rounded-2xl text-center">
+                            <span class="text-3xl block mb-1">⭐</span>
+                            <span class="font-fun text-2xl text-purple-700">${gameState.stars}</span>
+                            <p class="text-xs text-slate-500 font-bold uppercase">Stars Collected</p>
+                        </div>
+                        <div class="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-2xl text-center">
+                            <span class="text-3xl block mb-1">📚</span>
+                            <span class="font-fun text-2xl text-emerald-700">${gameState.wordsLearned}</span>
+                            <p class="text-xs text-slate-500 font-bold uppercase">Words Learned</p>
+                        </div>
+                        <div class="bg-amber-50 border-2 border-amber-200 p-4 rounded-2xl text-center">
+                            <span class="text-3xl block mb-1">🎯</span>
+                            <span class="font-fun text-2xl text-amber-700">${gameState.correctAnswers}</span>
+                            <p class="text-xs text-slate-500 font-bold uppercase">Correct Answers</p>
+                        </div>
+                        <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-2xl text-center">
+                            <span class="text-3xl block mb-1">⏱️</span>
+                            <span class="font-fun text-2xl text-sky-700">${minutesPlayed} min</span>
+                            <p class="text-xs text-slate-500 font-bold uppercase">Time Played</p>
+                        </div>
+                    </div>
+
+                    <button onclick="resetStats()" class="bg-rose-100 hover:bg-rose-200 text-rose-600 font-fun px-4 py-2 rounded-xl text-sm">
+                        Reset Progress
+                    </button>
+                </div>
+            `;
+        }
+
+        function resetStats() {
+            if (confirm("Are you sure you want to reset all learning progress?")) {
+                gameState.stars = 0;
+                gameState.wordsLearned = 0;
+                gameState.correctAnswers = 0;
+                gameState.timePlayed = 0;
+                saveStats();
+                renderParentDashboard();
             }
         }
 
-        // Initialize App on Load
+        // Initialize app on load
         window.onload = function() {
-            router('home');
+            loadStats();
+            renderHomeScreen();
         };
     </script>
 </body>
