@@ -87,7 +87,7 @@
             <button onclick="toggleSfx()" id="sfx-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-sky-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-sky-700" title="Toggle SFX">
                 🔊 <span id="sfx-status" class="text-xs">ON</span>
             </button>
-            <button onclick="toggleVoice()" id="voice-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-rose-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-rose-700" title="Toggle Voice Pronunciation">
+            <button onclick="toggleVoice()" id="voice-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-rose-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-rose-700" title="Toggle Vocabulary Voice">
                 🗣️ <span id="voice-status" class="text-xs">ON</span>
             </button>
             <button onclick="openParentMode()" class="bg-white/85 hover:bg-white px-3 py-1.5 rounded-full shadow-md border-2 border-purple-300 font-fun text-xs sm:text-sm text-purple-600 transition-transform active:scale-95">
@@ -302,7 +302,7 @@
 
         // Load stats from localStorage
         function loadStats() {
-            const saved = localStorage.getItem('myFirstWordsStateAudioVoice');
+            const saved = localStorage.getItem('myFirstWordsStateAutoVoice');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -321,7 +321,7 @@
         }
 
         function saveStats() {
-            localStorage.setItem('myFirstWordsStateAudioVoice', JSON.stringify({
+            localStorage.setItem('myFirstWordsStateAutoVoice', JSON.stringify({
                 stars: gameState.stars,
                 beginnerWordsLearned: gameState.beginnerWordsLearned,
                 advancedCluesMastered: gameState.advancedCluesMastered,
@@ -333,7 +333,7 @@
             }));
 
             if (db) {
-                db.ref('stats/user_global_audio_voice').set({
+                db.ref('stats/user_global_auto_voice').set({
                     stars: gameState.stars,
                     beginnerWordsLearned: gameState.beginnerWordsLearned,
                     advancedCluesMastered: gameState.advancedCluesMastered,
@@ -936,7 +936,7 @@
             }
         }
 
-        // --- LEARN WORDS MODE (UPDATED WITH PRONUNCIATION VOICE & NO LEVEL RESTRICTION) ---
+        // --- LEARN WORDS MODE (UPDATED WITH AUTOMATIC VOICE & REPLAY BUTTON) ---
         function startLearnMode(categoryName) {
             startBgm('beginner');
             const items = vocabData[categoryName];
@@ -944,6 +944,10 @@
 
             function renderCard() {
                 const item = items[currentIndex];
+                
+                // Automatically play pronunciation voice when card opens
+                speakWord(item.name);
+
                 const container = document.getElementById('app-container');
                 container.innerHTML = `
                     <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl border-4 border-amber-300">
@@ -958,10 +962,10 @@
                             <span class="text-8xl sm:text-9xl mb-2 animate-bounce-slow">${item.emoji}</span>
                         </div>
 
-                        <div class="flex items-center gap-3 mb-3">
+                        <div class="flex flex-col items-center gap-2 mb-3">
                             <h2 class="font-fun text-3xl sm:text-4xl text-purple-700 uppercase tracking-wide">${item.name}</h2>
-                            <button onclick="playSfx('click'); speakWord('${item.name}')" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white p-2.5 rounded-full shadow-md flex items-center justify-center transition-transform active:scale-95" title="Pronounce Word">
-                                <span class="text-xl">🔊</span>
+                            <button onclick="playSfx('click'); speakWord('${item.name}')" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white font-fun px-4 py-2 rounded-2xl shadow-md flex items-center gap-2 text-sm transition-transform active:scale-95" title="Listen Again">
+                                <span>🔊</span> <span>Listen Again</span>
                             </button>
                         </div>
 
