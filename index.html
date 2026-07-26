@@ -76,18 +76,21 @@
 
     <!-- Top Header Bar (Global Stats & Audio Controls) -->
     <header class="w-full max-w-4xl flex justify-between items-center z-10 mb-2">
-        <div class="flex items-center bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-md border-2 border-amber-300">
+        <div class="flex items-center bg-white/85 backdrop-blur-md px-4 py-2 rounded-full shadow-md border-2 border-amber-300">
             <span class="text-2xl mr-2">⭐</span>
             <span id="star-count" class="font-fun text-xl text-amber-500">0</span>
         </div>
-        <div class="flex items-center gap-2 sm:gap-3">
-            <button onclick="toggleMusic()" id="music-btn" class="bg-white/80 hover:bg-white px-3 py-2 rounded-full shadow-md border-2 border-emerald-300 transition-transform active:scale-95 text-sm sm:text-base font-fun flex items-center gap-1 text-emerald-700" title="Toggle Music">
+        <div class="flex items-center gap-1.5 sm:gap-2.5 flex-wrap justify-end">
+            <button onclick="toggleMusic()" id="music-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-emerald-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-emerald-700" title="Toggle Music">
                 🎵 <span id="music-status" class="text-xs">ON</span>
             </button>
-            <button onclick="toggleSfx()" id="sfx-btn" class="bg-white/80 hover:bg-white px-3 py-2 rounded-full shadow-md border-2 border-sky-300 transition-transform active:scale-95 text-sm sm:text-base font-fun flex items-center gap-1 text-sky-700" title="Toggle SFX">
+            <button onclick="toggleSfx()" id="sfx-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-sky-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-sky-700" title="Toggle SFX">
                 🔊 <span id="sfx-status" class="text-xs">ON</span>
             </button>
-            <button onclick="openParentMode()" class="bg-white/80 hover:bg-white px-3 py-2 rounded-full shadow-md border-2 border-purple-300 font-fun text-xs sm:text-sm text-purple-600 transition-transform active:scale-95">
+            <button onclick="toggleVoice()" id="voice-btn" class="bg-white/85 hover:bg-white px-2.5 py-1.5 rounded-full shadow-md border-2 border-rose-300 transition-transform active:scale-95 text-xs sm:text-sm font-fun flex items-center gap-1 text-rose-700" title="Toggle Voice Pronunciation">
+                🗣️ <span id="voice-status" class="text-xs">ON</span>
+            </button>
+            <button onclick="openParentMode()" class="bg-white/85 hover:bg-white px-3 py-1.5 rounded-full shadow-md border-2 border-purple-300 font-fun text-xs sm:text-sm text-purple-600 transition-transform active:scale-95">
                 🔒 Parent
             </button>
         </div>
@@ -281,6 +284,7 @@
             timePlayed: 0,
             musicEnabled: true,
             sfxEnabled: true,
+            voiceEnabled: true,
             currentLevel: 'beginner',
             currentCategory: null,
             gameQueue: [],
@@ -298,7 +302,7 @@
 
         // Load stats from localStorage
         function loadStats() {
-            const saved = localStorage.getItem('myFirstWordsStateAudio');
+            const saved = localStorage.getItem('myFirstWordsStateAudioVoice');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -309,6 +313,7 @@
                     gameState.timePlayed = parsed.timePlayed || 0;
                     if (parsed.musicEnabled !== undefined) gameState.musicEnabled = parsed.musicEnabled;
                     if (parsed.sfxEnabled !== undefined) gameState.sfxEnabled = parsed.sfxEnabled;
+                    if (parsed.voiceEnabled !== undefined) gameState.voiceEnabled = parsed.voiceEnabled;
                 } catch(e) {}
             }
             updateStarDisplay();
@@ -316,18 +321,19 @@
         }
 
         function saveStats() {
-            localStorage.setItem('myFirstWordsStateAudio', JSON.stringify({
+            localStorage.setItem('myFirstWordsStateAudioVoice', JSON.stringify({
                 stars: gameState.stars,
                 beginnerWordsLearned: gameState.beginnerWordsLearned,
                 advancedCluesMastered: gameState.advancedCluesMastered,
                 correctAnswers: gameState.correctAnswers,
                 timePlayed: gameState.timePlayed,
                 musicEnabled: gameState.musicEnabled,
-                sfxEnabled: gameState.sfxEnabled
+                sfxEnabled: gameState.sfxEnabled,
+                voiceEnabled: gameState.voiceEnabled
             }));
 
             if (db) {
-                db.ref('stats/user_global_audio').set({
+                db.ref('stats/user_global_audio_voice').set({
                     stars: gameState.stars,
                     beginnerWordsLearned: gameState.beginnerWordsLearned,
                     advancedCluesMastered: gameState.advancedCluesMastered,
@@ -344,6 +350,7 @@
         function updateAudioUI() {
             document.getElementById('music-status').innerText = gameState.musicEnabled ? "ON" : "OFF";
             document.getElementById('sfx-status').innerText = gameState.sfxEnabled ? "ON" : "OFF";
+            document.getElementById('voice-status').innerText = gameState.voiceEnabled ? "ON" : "OFF";
         }
 
         // --- WEB AUDIO SYNTHESIZER & SOUND ENGINE ---
@@ -357,6 +364,19 @@
             }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
+            }
+        }
+
+        // Vocabulary Voice Pronunciation (SpeechSynthesis API)
+        function speakWord(word) {
+            if (!gameState.voiceEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85; // Slow and easy for kids aged 4-7
+                utterance.pitch = 1.1; // Child-friendly warm pitch
+                window.speechSynthesis.speak(utterance);
             }
         }
 
@@ -381,8 +401,7 @@
                 osc.start(now);
                 osc.stop(now + 0.08);
             } else if (type === 'correct') {
-                // Cheerful success arpeggio
-                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                const notes = [523.25, 659.25, 783.99, 1046.50];
                 notes.forEach((freq, index) => {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
@@ -396,8 +415,7 @@
                     osc.stop(now + index * 0.08 + 0.3);
                 });
             } else if (type === 'star') {
-                // Twinkle star chime
-                const notes = [880, 1174.66, 1318.51, 1760]; // A5, D6, E6, A6
+                const notes = [880, 1174.66, 1318.51, 1760];
                 notes.forEach((freq, index) => {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
@@ -411,12 +429,11 @@
                     osc.stop(now + index * 0.06 + 0.2);
                 });
             } else if (type === 'wrong') {
-                // Gentle soft retry chime (ascending friendly two-tone, non-negative)
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(330, now); // E4
-                osc.frequency.setValueAtTime(392, now + 0.15); // G4
+                osc.frequency.setValueAtTime(330, now);
+                osc.frequency.setValueAtTime(392, now + 0.15);
                 gain.gain.setValueAtTime(0.15, now);
                 gain.gain.linearRampToValueAtTime(0.001, now + 0.35);
                 osc.connect(gain);
@@ -424,7 +441,6 @@
                 osc.start(now);
                 osc.stop(now + 0.35);
             } else if (type === 'achievement') {
-                // Grand celebration chime
                 const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
                 notes.forEach((freq, index) => {
                     const osc = audioCtx.createOscillator();
@@ -448,17 +464,15 @@
             if (!gameState.musicEnabled) return;
             initAudioContext();
 
-            // Pentatonic scales for joyful kids music
             const scales = {
-                home: [261.63, 293.66, 329.63, 392.00, 523.25], // C Major pentatonic
-                beginner: [329.63, 392.00, 440.00, 523.25, 659.25], // E Major pentatonic
-                advanced: [220.00, 246.94, 293.66, 329.63, 392.00], // Mystery A minor pentatonic
+                home: [261.63, 293.66, 329.63, 392.00, 523.25],
+                beginner: [329.63, 392.00, 440.00, 523.25, 659.25],
+                advanced: [220.00, 246.94, 293.66, 329.63, 392.00],
                 category: [293.66, 329.63, 392.00, 440.00, 587.33],
                 result: [392.00, 440.00, 523.25, 659.25, 783.99]
             };
 
             const notes = scales[theme] || scales.home;
-            let step = 0;
 
             bgmInterval = setInterval(() => {
                 if (!gameState.musicEnabled || !audioCtx) return;
@@ -510,6 +524,13 @@
             playSfx('click');
         }
 
+        function toggleVoice() {
+            gameState.voiceEnabled = !gameState.voiceEnabled;
+            saveStats();
+            updateAudioUI();
+            playSfx('click');
+        }
+
         // --- VIEW ROUTER ---
         function renderHomeScreen() {
             startBgm('home');
@@ -524,7 +545,7 @@
                         <button onclick="playSfx('click'); renderLevelSelection('game')" class="btn-3d bg-emerald-400 hover:bg-emerald-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-emerald-200">
                             <span>▶</span> Play Game
                         </button>
-                        <button onclick="playSfx('click'); renderLevelSelection('learn')" class="btn-3d bg-amber-400 hover:bg-amber-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-amber-200">
+                        <button onclick="playSfx('click'); renderLearnCategorySelection()" class="btn-3d bg-amber-400 hover:bg-amber-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-amber-200">
                             <span>📚</span> Learn Words
                         </button>
                         <button onclick="playSfx('click'); renderRewards()" class="btn-3d bg-sky-400 hover:bg-sky-500 text-white font-fun text-xl sm:text-2xl py-4 px-6 rounded-3xl flex items-center justify-center gap-3 border-4 border-sky-200 col-span-1 sm:col-span-2">
@@ -544,7 +565,7 @@
             container.innerHTML = `
                 <div class="w-full max-w-2xl flex flex-col items-center">
                     <div class="w-full flex justify-between items-center mb-6 px-2">
-                        <button onclick="playSfx('click'); renderHomeScreen()" class="bg-white/80 hover:bg-white px-4 py-2 rounded-2xl font-fun text-purple-600 shadow-md border-2 border-purple-300">
+                        <button onclick="playSfx('click'); renderHomeScreen()" class="bg-white/85 hover:bg-white px-4 py-2 rounded-2xl font-fun text-purple-600 shadow-md border-2 border-purple-300">
                             ⬅ Home
                         </button>
                         <h2 class="font-fun text-2xl sm:text-3xl text-purple-700 drop-shadow-sm">Choose Your Level</h2>
@@ -577,7 +598,43 @@
             renderCategorySelection();
         }
 
-        // --- CATEGORY SELECTION VIEW ---
+        // --- LEARN WORDS: CATEGORY SELECTION (NO LEVEL RESTRICTION) ---
+        function renderLearnCategorySelection() {
+            currentAppMode = 'learn';
+            startBgm('category');
+            const categories = Object.keys(vocabData);
+            const container = document.getElementById('app-container');
+            
+            let gridHtml = '';
+            categories.forEach(cat => {
+                let sampleEmoji = vocabData[cat][0].emoji;
+                gridHtml += `
+                    <button onclick="playSfx('click'); startLearnMode('${cat}')" class="btn-3d bg-white hover:bg-amber-50 p-4 rounded-3xl flex flex-col items-center justify-center border-4 border-amber-200 shadow-lg transition-transform active:scale-95 group">
+                        <span class="text-4xl sm:text-5xl mb-2 group-hover:scale-110 transition-transform">${sampleEmoji}</span>
+                        <span class="font-fun text-base sm:text-lg text-amber-700">${cat}</span>
+                    </button>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="w-full flex flex-col items-center">
+                    <div class="w-full flex justify-between items-center mb-4 px-2">
+                        <button onclick="playSfx('click'); renderHomeScreen()" class="bg-white/85 hover:bg-white px-4 py-2 rounded-2xl font-fun text-amber-700 shadow-md border-2 border-amber-300">
+                            ⬅ Home
+                        </button>
+                        <h2 class="font-fun text-2xl sm:text-3xl text-amber-700 drop-shadow-sm">
+                            📚 Learn Words (All Categories)
+                        </h2>
+                        <div class="w-16"></div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 w-full max-h-[70vh] overflow-y-auto p-2">
+                        ${gridHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- GAME MODE: CATEGORY SELECTION ---
         function renderCategorySelection() {
             startBgm('category');
             const categories = Object.keys(vocabData);
@@ -597,11 +654,11 @@
             container.innerHTML = `
                 <div class="w-full flex flex-col items-center">
                     <div class="w-full flex justify-between items-center mb-4 px-2">
-                        <button onclick="playSfx('click'); renderLevelSelection('${currentAppMode}')" class="bg-white/80 hover:bg-white px-4 py-2 rounded-2xl font-fun text-purple-600 shadow-md border-2 border-purple-300">
+                        <button onclick="playSfx('click'); renderLevelSelection('${currentAppMode}')" class="bg-white/85 hover:bg-white px-4 py-2 rounded-2xl font-fun text-purple-600 shadow-md border-2 border-purple-300">
                             ⬅ Level
                         </button>
                         <h2 class="font-fun text-2xl sm:text-3xl text-purple-700 drop-shadow-sm">
-                            ${currentAppMode === 'game' ? `🎮 ${gameState.currentLevel.toUpperCase()} Mode` : '📚 Choose Learning Topic'}
+                            🎮 ${gameState.currentLevel.toUpperCase()} Mode
                         </h2>
                         <div class="w-16"></div>
                     </div>
@@ -614,14 +671,10 @@
 
         function selectCategory(categoryName) {
             gameState.currentCategory = categoryName;
-            if (currentAppMode === 'game') {
-                if (gameState.currentLevel === 'beginner') {
-                    startBeginnerGame(categoryName);
-                } else {
-                    startAdvancedGame(categoryName);
-                }
+            if (gameState.currentLevel === 'beginner') {
+                startBeginnerGame(categoryName);
             } else {
-                startLearnMode(categoryName);
+                startAdvancedGame(categoryName);
             }
         }
 
@@ -883,7 +936,7 @@
             }
         }
 
-        // --- LEARNING MODE (FLASHCARDS) ---
+        // --- LEARN WORDS MODE (UPDATED WITH PRONUNCIATION VOICE & NO LEVEL RESTRICTION) ---
         function startLearnMode(categoryName) {
             startBgm('beginner');
             const items = vocabData[categoryName];
@@ -895,7 +948,7 @@
                 container.innerHTML = `
                     <div class="w-full max-w-xl flex flex-col items-center bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl border-4 border-amber-300">
                         <div class="w-full flex justify-between items-center mb-4">
-                            <button onclick="playSfx('click'); renderCategorySelection()" class="bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-xl font-fun text-amber-700 text-sm">
+                            <button onclick="playSfx('click'); renderLearnCategorySelection()" class="bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-xl font-fun text-amber-700 text-sm">
                                 ⬅ Categories
                             </button>
                             <span class="font-fun text-amber-600">${currentIndex + 1} / ${items.length}</span>
@@ -907,6 +960,9 @@
 
                         <div class="flex items-center gap-3 mb-3">
                             <h2 class="font-fun text-3xl sm:text-4xl text-purple-700 uppercase tracking-wide">${item.name}</h2>
+                            <button onclick="playSfx('click'); speakWord('${item.name}')" class="btn-3d bg-rose-400 hover:bg-rose-500 text-white p-2.5 rounded-full shadow-md flex items-center justify-center transition-transform active:scale-95" title="Pronounce Word">
+                                <span class="text-xl">🔊</span>
+                            </button>
                         </div>
 
                         <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 w-full text-center mb-6">
