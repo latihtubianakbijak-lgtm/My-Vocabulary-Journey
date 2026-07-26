@@ -108,8 +108,8 @@
             <div id="math-question" class="font-fun text-xl text-slate-700 mb-4 bg-purple-50 py-2 rounded-xl">3 + 4 = ?</div>
             <input type="number" id="math-answer" class="w-32 text-center text-2xl font-fun border-2 border-purple-300 rounded-xl p-2 mb-4 focus:outline-none focus:border-purple-500" placeholder="?">
             <div class="flex gap-2 justify-center">
-                <button onclick="verifyPin()" class="bg-emerald-400 hover:bg-emerald-500 text-white font-fun px-6 py-2 rounded-2xl btn-3D">Enter</button>
-                <button onclick="closeParentMode()" class="bg-rose-400 hover:bg-rose-500 text-white font-fun px-6 py-2 rounded-2xl btn-3D">Cancel</button>
+                <button onclick="verifyPin()" class="bg-emerald-400 hover:bg-emerald-500 text-white font-fun px-6 py-2 rounded-2xl btn-3d">Enter</button>
+                <button onclick="closeParentMode()" class="bg-rose-400 hover:bg-rose-500 text-white font-fun px-6 py-2 rounded-2xl btn-3d">Cancel</button>
             </div>
         </div>
     </div>
@@ -228,20 +228,44 @@
                 { name: "White", emoji: "🤍", clues: ["I am the color of snow and clouds.", "I reflect all light.", "Cotton is fluffy and white."], sentence: "Snow is white." },
                 { name: "Gray", emoji: "🩶", clues: ["I am between black and white.", "Elephants wear my color.", "Stormy clouds look gray."], sentence: "Elephants are gray." }
             ],
-            "Things Around Me": [
-                { name: "Book", emoji: "📖", clues: ["I have many pages.", "You read stories inside me.", "I have a front and back cover."], sentence: "I read a fun book." },
-                { name: "Clock", emoji: "⏰", clues: ["I have numbers from 1 to 12.", "I have moving hands.", "I tell you the time."], sentence: "The clock ticks." },
-                { name: "Bed", emoji: "🛏️", clues: ["You sleep on me at night.", "I have a pillow and blanket.", "I am soft and cozy."], sentence: "I sleep in my bed." }
-            ],
-            "Clothes": [
-                { name: "Shirt", emoji: "👕", clues: ["You wear me on your upper body.", "I have sleeves.", "I keep you warm."], sentence: "I wear a blue shirt." },
-                { name: "Pants", emoji: "👖", clues: ["You wear me on your legs.", "I have two holes for your feet.", "I keep you covered."], sentence: "My pants have pockets." },
-                { name: "Hat", emoji: "🧢", clues: ["You wear me on your head.", "I protect you from the sun.", "I look stylish."], sentence: "I wear a hat outside." }
-            ],
             "Body Parts": [
-                { name: "Eyes", emoji: "👀", clues: ["You have two of me.", "You use me to see things.", "You can blink with me."], sentence: "I see with my eyes." },
-                { name: "Nose", emoji: "👃", clues: ["I am in the middle of your face.", "You use me to smell flowers.", "You can sneeze with me."], sentence: "I smell with my nose." },
-                { name: "Hand", emoji: "✋", clues: ["I have five fingers.", "You use me to hold things.", "You can wave hello with me."], sentence: "I wave with my hand." }
+                { name: "Head", emoji: "🗣️", clues: ["Your brain is inside me. I am on top of your body."], sentence: "My head holds my brain." },
+                { name: "Hair", emoji: "💇", clues: ["I grow on your head. I can be short or long."], sentence: "I brush my hair." },
+                { name: "Eye", emoji: "👁️", clues: ["I help you see things. I can blink."], sentence: "I see with my eye." },
+                { name: "Ear", emoji: "👂", clues: ["I help you hear sounds. I am on the side of your head."], sentence: "I hear with my ear." },
+                { name: "Nose", emoji: "👃", clues: ["I help you smell. I am in the middle of your face."], sentence: "I smell flowers with my nose." },
+                { name: "Mouth", emoji: "👄", clues: ["I help you eat and talk."], sentence: "I use my mouth to speak." },
+                { name: "Teeth", emoji: "🦷", clues: ["I help you chew food. They are white and hard."], sentence: "I brush my teeth." },
+                { name: "Tongue", emoji: "👅", clues: ["I help you taste food. I am inside your mouth."], sentence: "My tongue tastes yummy food." },
+                { name: "Face", emoji: "😀", clues: ["My eyes, nose, and mouth are on me."], sentence: "Everyone has a unique face." },
+                { name: "Neck", emoji: "🧣", clues: ["I connects your head and body."], sentence: "My neck holds my head up." },
+                { name: "Shoulder", emoji: "🦾", clues: ["I am between your neck and arm."], sentence: "I can shrug my shoulder." }
+            ],
+            "Daily Objects": [
+                { name: "Chair", emoji: "🪑", clues: ["You sit on me. I have legs."], sentence: "I sit on a chair." },
+                { name: "Table", emoji: "🪞", clues: ["You put things on me. I have a flat surface."], sentence: "We put books on the table." },
+                { name: "Bed", emoji: "🛏️", clues: ["You sleep on me at night. I am soft and comfortable."], sentence: "My bed is very cozy." },
+                { name: "Pillow", emoji: "💤", clues: ["I support your head when you sleep."], sentence: "I rest my head on a pillow." },
+                { name: "Blanket", emoji: "🛌", clues: ["I keep you warm when you sleep."], sentence: "The blanket keeps me warm." },
+                { name: "Door", emoji: "🚪", clues: ["I open and close. I help people enter rooms."], sentence: "Please close the door." },
+                { name: "Window", emoji: "🪟", clues: ["You can see outside through me."], sentence: "I look out the window." },
+                { name: "Clock", emoji: "⏰", clues: ["I show the time. I have numbers and hands."], sentence: "The clock tells the time." },
+                { name: "Lamp", emoji: "💡", clues: ["I give light when it is dark."], sentence: "Turn on the lamp at night." },
+                { name: "Fan", emoji: "🌀", clues: ["I move air and keep you cool."], sentence: "The fan keeps the room cool." },
+                { name: "Television", emoji: "📺", clues: ["You watch shows and cartoons on me."], sentence: "I watch cartoons on television." }
+            ],
+            "Places": [
+                { name: "House", emoji: "🏠", clues: ["People live in me. I have rooms and doors."], sentence: "I live in a nice house." },
+                { name: "School", emoji: "🏫", clues: ["Children go here to learn. Teachers work here."], sentence: "I go to school every day." },
+                { name: "Classroom", emoji: "🎒", clues: ["Students learn inside me. There are desks and chairs."], sentence: "Our classroom is bright and clean." },
+                { name: "Library", emoji: "📚", clues: ["You can read and borrow books here."], sentence: "We are quiet in the library." },
+                { name: "Hospital", emoji: "🏥", clues: ["Doctors and nurses help sick people here."], sentence: "Doctors work in the hospital." },
+                { name: "Clinic", emoji: "🩺", clues: ["Doctors check patients here."], sentence: "We visit the clinic when sick." },
+                { name: "Police Station", emoji: "🚓", clues: ["Police officers work here."], sentence: "Police officers are at the police station." },
+                { name: "Fire Station", emoji: "🚒", clues: ["Firefighters work here."], sentence: "Fire trucks stay at the fire station." },
+                { name: "Post Office", emoji: "📮", clues: ["People send letters and packages here."], sentence: "I mail a letter at the post office." },
+                { name: "Bank", emoji: "🏦", clues: ["People keep money and do banking here."], sentence: "My parents visit the bank." },
+                { name: "Supermarket", emoji: "🛒", clues: ["People buy food and things here."], sentence: "We buy groceries at the supermarket." }
             ]
         };
 
@@ -400,7 +424,7 @@
                         </h2>
                         <div class="w-16"></div>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 w-full max-h-[70vh] overflow-y-auto p-2">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 w-full max-h-[70vh] overflow-y-auto p-2">
                         ${gridHtml}
                     </div>
                 </div>
@@ -523,7 +547,6 @@
                     gameState.currentClueIndex++;
                     renderQuizQuestion();
                 } else {
-                    // Show small hint message modal/alert inline
                     showIncorrectFeedback(currentItem);
                 }
             }
