@@ -146,8 +146,8 @@
             "Vegetables": [
                 { name: "Carrot", emoji: "🥕", clues: ["I am orange.", "I grow under the soil.", "Rabbits like me."], sentence: "I eat a carrot." },
                 { name: "Broccoli", emoji: "🥦", clues: ["I look like a little tree.", "I am green.", "I am healthy."], sentence: "Broccoli is good for me." },
-                { name: "Lettuce", emoji: "🥬", clues: ["I have green leaves.", "I make you strong.", "I am a vegetable."], sentence: "Spinach makes me strong." },
-                { name: "Cabbage", emoji: "🥗", clues: ["I have many leaves.", "My leaves are wrapped together.", "I am usually green."], sentence: "The cabbage is round." },
+                { name: "Spinach", emoji: "🥬", clues: ["I have green leaves.", "I make you strong.", "I am a vegetable."], sentence: "Spinach makes me strong." },
+                { name: "Mushroom", emoji: "🍄", clues: ["I have a round top.", "I grow in forests and farms.", "I am a type of food."], sentence: "The mushroom has a round cap." },
                 { name: "Eggplant", emoji: "🍆", clues: ["I am purple.", "I am a vegetable.", "I have a green stem."], sentence: "The eggplant is purple." },
                 { name: "Garlic", emoji: "🧄", clues: ["I am white.", "I grow underground.", "I add flavor to food."], sentence: "Garlic is used in cooking." },
                 { name: "Cucumber", emoji: "🥒", clues: ["I am long and green.", "I am crunchy.", "I taste fresh."], sentence: "I like fresh cucumber." },
@@ -200,7 +200,7 @@
                 { name: "Teacher", emoji: "👩‍🏫", clues: ["I teach children.", "I work at school.", "I help you learn."], sentence: "My teacher helps me learn new things." },
                 { name: "Policeman", emoji: "👮‍♂️", clues: ["I keep people safe.", "I wear a uniform.", "I catch bad people."], sentence: "The policeman keeps our neighborhood safe." },
                 { name: "Fireman", emoji: "👨‍🚒", clues: ["I put out fires.", "I wear a helmet.", "I help people in danger."], sentence: "The brave fireman puts out fires." },
-                { name: "Nurse", emoji: "👩‍⚕️", clues: ["I help doctors.", "I take care of sick people.", "I work in a hospital."], sentence: "The nurse takes care of patients." },
+                { name: "Dancer", emoji: "💃", clues: ["I move my body to music.", "I love to dance.", "I perform beautiful movements."], sentence: "The dancer performs beautiful movements." },
                 { name: "Chef", emoji: "👨‍🍳", clues: ["I cook delicious food.", "I work in a kitchen.", "I wear a chef hat."], sentence: "The chef cooks yummy food." },
                 { name: "Farmer", emoji: "👨‍🌾", clues: ["I grow plants.", "I take care of animals.", "I work on a farm."], sentence: "The farmer grows fresh vegetables." },
                 { name: "Pilot", emoji: "👨‍✈️", clues: ["I fly an airplane.", "I travel in the sky.", "I wear a uniform."], sentence: "The pilot flies us to another country." },
@@ -212,7 +212,7 @@
                 { name: "Circle", emoji: "🔴", clues: ["I am round. I have no corners. A ball looks like me.", "I have no straight lines.", "I look like a ring."], sentence: "A ball is a circle." },
                 { name: "Square", emoji: "🟦", clues: ["I have four equal sides. I have four corners.", "All my sides are the same length.", "I look like a tile."], sentence: "The window is a square." },
                 { name: "Triangle", emoji: "🔺", clues: ["I have three sides. I have three corners.", "I look like a slice of pizza.", "I have a pointed top."], sentence: "A slice of pizza is a triangle." },
-                { name: "Rectangle", emoji: "🟩", clues: ["My two over four sides are longer.", "I have four corners and four sides.", "I look like a door."], sentence: "The door is a rectangle." },
+                { name: "Rectangle", emoji: "▭", clues: ["My two opposite sides are longer than the others.", "I have four corners and four straight sides.", "I am wider than I am tall."], sentence: "The door is a rectangle." },
                 { name: "Oval", emoji: "🥚", clues: ["I look like a stretched circle. An egg looks like me.", "I have curved smooth lines.", "I am longer than a circle."], sentence: "An egg has an oval shape." },
                 { name: "Star", emoji: "⭐", clues: ["I have many points. I shine in the sky.", "I look bright at night.", "I am shaped like a twinkle star."], sentence: "I see a star in the sky." },
                 { name: "Heart", emoji: "❤️", clues: ["I show love. I have a special shape.", "I am symmetric with two bumps.", "People draw me to show care."], sentence: "I draw a heart for love." },
@@ -244,7 +244,7 @@
                 { name: "Teeth", emoji: "🦷", clues: ["I help you chew food. They are white and hard."], sentence: "I brush my teeth." },
                 { name: "Tongue", emoji: "👅", clues: ["I help you taste food. I am inside your mouth."], sentence: "My tongue tastes yummy food." },
                 { name: "Face", emoji: "😀", clues: ["My eyes, nose, and mouth are on me."], sentence: "Everyone has a unique face." },
-                { name: "Feet", emoji: "🦶", clues: ["I help you stand.", "I help you walk and run.", "I am at the bottom of your body."], sentence: "My feet help me walk[cite: 1]." },
+                { name: "Feet", emoji: "🦶", clues: ["I help you stand.", "I help you walk and run.", "I am at the bottom of your body."], sentence: "My feet help me walk." },
                 { name: "Shoulder", emoji: "🦾", clues: ["I am between your neck and arm."], sentence: "I can shrug my shoulder." }
             ],
             "Daily Objects": [
@@ -291,17 +291,15 @@
             currentQuestionIndex: 0,
             currentClueIndex: 0,
             attemptCount: 0,
-            lastChoicesSignature: null // Tracks exact combination and order of previous question choices to avoid consecutive duplication
+            lastChoicesSignature: null
         };
 
         const totalVocabularyCount = Object.values(vocabData).flat().length;
 
-        // Timer interval
         setInterval(() => {
             gameState.timePlayed++;
         }, 1000);
 
-        // Load stats from localStorage
         function loadStats() {
             const saved = localStorage.getItem('myFirstWordsStateCategoryEnforced');
             if (saved) {
@@ -354,11 +352,8 @@
             document.getElementById('voice-status').innerText = gameState.voiceEnabled ? "ON" : "OFF";
         }
 
-        // --- STRICT CATEGORY CHOICE GENERATOR WITH ANTI-DUPLICATION & SHUFFLE RULES ---
         function generateCategoryChoices(currentItem, categoryName, choiceCount = 3) {
             const categoryItems = vocabData[categoryName];
-            
-            // Filter out the current item to get eligible distractors strictly from the SAME category
             const otherItems = categoryItems.filter(item => item.name !== currentItem.name);
             
             let choices = [];
@@ -366,31 +361,21 @@
             let maxAttempts = 10;
 
             do {
-                // Shuffle copy of other items
                 const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random());
-                
-                // Select distinct distractors up to (choiceCount - 1), or available pool size if category is small
                 const numDistractors = Math.min(choiceCount - 1, shuffledOthers.length);
                 const selectedDistractors = shuffledOthers.slice(0, numDistractors);
 
-                // Combine correct answer and distractors
                 choices = [currentItem, ...selectedDistractors];
-
-                // Shuffle the final position of the choices thoroughly
                 choices = choices.sort(() => 0.5 - Math.random());
 
-                // Create signature string to check consecutive uniqueness (Rule 5)
                 signature = choices.map(c => c.name).join('|');
-                
                 maxAttempts--;
             } while (signature === gameState.lastChoicesSignature && maxAttempts > 0 && otherItems.length >= (choiceCount - 1));
 
-            // Save signature to prevent consecutive exact duplicates
             gameState.lastChoicesSignature = signature;
             return choices;
         }
 
-        // --- WEB AUDIO SYNTHESIZER & SOUND ENGINE ---
         let audioCtx = null;
         let bgmInterval = null;
         let currentBgmTheme = 'home';
@@ -404,20 +389,18 @@
             }
         }
 
-        // Vocabulary Voice Pronunciation (SpeechSynthesis API)
         function speakWord(word) {
             if (!gameState.voiceEnabled) return;
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(word);
                 utterance.lang = 'en-US';
-                utterance.rate = 0.85; // Slow and easy for kids aged 4-7
-                utterance.pitch = 1.1; // Child-friendly warm pitch
+                utterance.rate = 0.85;
+                utterance.pitch = 1.1;
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        // SFX Generator
         function playSfx(type) {
             if (!gameState.sfxEnabled) return;
             initAudioContext();
@@ -494,7 +477,6 @@
             }
         }
 
-        // BGM Sequencer
         function startBgm(theme = 'home') {
             currentBgmTheme = theme;
             stopBgm();
@@ -568,7 +550,6 @@
             playSfx('click');
         }
 
-        // --- VIEW ROUTER ---
         function renderHomeScreen() {
             startBgm('home');
             const container = document.getElementById('app-container');
@@ -610,7 +591,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full px-4">
-                        <!-- BEGINNER CARD -->
                         <button onclick="playSfx('click'); selectLevelAndProceed('beginner')" class="btn-3d bg-white hover:bg-emerald-50 p-6 rounded-3xl flex flex-col items-center justify-center border-4 border-emerald-300 shadow-xl transition-transform active:scale-95 group text-center">
                             <span class="text-6xl mb-3 group-hover:scale-110 transition-transform">🌱</span>
                             <h3 class="font-fun text-2xl sm:text-3xl text-emerald-600 mb-2">BEGINNER</h3>
@@ -618,7 +598,6 @@
                             <span class="bg-emerald-100 text-emerald-700 font-fun px-4 py-1 rounded-full text-xs uppercase tracking-wider">Tap to Play</span>
                         </button>
 
-                        <!-- ADVANCED CARD -->
                         <button onclick="playSfx('click'); selectLevelAndProceed('advanced')" class="btn-3d bg-white hover:bg-purple-50 p-6 rounded-3xl flex flex-col items-center justify-center border-4 border-purple-300 shadow-xl transition-transform active:scale-95 group text-center">
                             <span class="text-6xl mb-3 group-hover:scale-110 transition-transform">🚀</span>
                             <h3 class="font-fun text-2xl sm:text-3xl text-purple-600 mb-2">ADVANCED</h3>
@@ -635,7 +614,6 @@
             renderCategorySelection();
         }
 
-        // --- LEARN WORDS: CATEGORY SELECTION (NO LEVEL RESTRICTION) ---
         function renderLearnCategorySelection() {
             currentAppMode = 'learn';
             startBgm('category');
@@ -671,7 +649,6 @@
             `;
         }
 
-        // --- GAME MODE: CATEGORY SELECTION ---
         function renderCategorySelection() {
             startBgm('category');
             const categories = Object.keys(vocabData);
@@ -715,10 +692,8 @@
             }
         }
 
-        // --- BEGINNER LEVEL GAME MODE ---
         function startBeginnerGame(categoryName) {
             startBgm('beginner');
-            // Shuffle question order for every new game session (Rule 6 & Question Randomization)
             const items = [...vocabData[categoryName]].sort(() => 0.5 - Math.random());
             gameState.gameQueue = items;
             gameState.currentQuestionIndex = 0;
@@ -737,7 +712,6 @@
             const currentItem = qList[gameState.currentQuestionIndex];
             gameState.attemptCount = 0;
 
-            // Generate answer choices strictly from the SAME category with shuffling and anti-duplication
             const choices = generateCategoryChoices(currentItem, gameState.currentCategory, 3);
 
             const container = document.getElementById('app-container');
@@ -818,10 +792,8 @@
             renderBeginnerQuestion();
         }
 
-        // --- ADVANCED LEVEL GAME MODE ---
         function startAdvancedGame(categoryName) {
             startBgm('advanced');
-            // Shuffle question order for every new game session (Rule 6 & Question Randomization)
             const items = [...vocabData[categoryName]].sort(() => 0.5 - Math.random());
             gameState.gameQueue = items;
             gameState.currentQuestionIndex = 0;
@@ -842,7 +814,6 @@
             const maxClues = currentItem.clues.length;
             const currentClue = currentItem.clues[gameState.currentClueIndex];
 
-            // Generate answer choices strictly from the SAME category with shuffling and anti-duplication
             const choices = generateCategoryChoices(currentItem, gameState.currentCategory, 3);
 
             const container = document.getElementById('app-container');
@@ -866,7 +837,6 @@
                         <p class="font-fun text-xl sm:text-2xl text-slate-700" id="clue-text">"${currentClue}"</p>
                     </div>
 
-                    <!-- Attempt feedback tracker notice -->
                     <div id="attempt-feedback-box" class="w-full text-center mb-4 font-fun text-purple-600 text-sm">
                         ${gameState.attemptCount === 0 ? 'Attempt 1 - Make your guess!' : gameState.attemptCount === 1 ? 'Attempt 2 - Try Again!' : 'Attempt 3 - Look carefully!'}
                     </div>
@@ -985,7 +955,6 @@
             }
         }
 
-        // --- LEARN WORDS MODE (UPDATED WITH PRONUNCIATION VOICE & NO LEVEL RESTRICTION) ---
         function startLearnMode(categoryName) {
             startBgm('beginner');
             const items = vocabData[categoryName];
@@ -1047,7 +1016,6 @@
             renderCard();
         }
 
-        // --- REWARDS & PROGRESS SYSTEM ---
         function renderRewards() {
             startBgm('home');
             const stars = gameState.stars;
@@ -1107,7 +1075,6 @@
             `;
         }
 
-        // --- PARENT MODE ---
         let mathA = 3;
         let mathB = 4;
 
@@ -1192,7 +1159,6 @@
             }
         }
 
-        // Initialize app on load
         window.onload = function() {
             loadStats();
             renderHomeScreen();
